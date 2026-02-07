@@ -6,245 +6,267 @@ import { db } from "@/lib/firebase";
 import { collection, getDocs } from "firebase/firestore";
 import { useCart } from "./context/CartContext";
 
+/* ---------------- TYPE ---------------- */
+
 type Product = {
-  id: string;
-  name: string;
-  price: number;
-  image: string;
-  category: string;
-  sizes?: Record<string, number>;
-  featured?: boolean;
+  id:string;
+  name:string;
+  price:number;
+  image:string;
+  category:string;
+  sizes?:Record<string,number>;
+  featured?:boolean;
 };
 
-export default function Home() {
+/* ---------------- COMPONENT ---------------- */
 
-  const [products,setProducts] = useState<Product[]>([]);
-  const [selectedCategory, setSelectedCategory] = useState("all");
-  const { cart, setCart } = useCart();
+export default function Home(){
 
-  useEffect(()=>{
+const [products,setProducts] = useState<Product[]>([]);
+const [selectedCategory,setSelectedCategory] = useState("all");
+const { cart, setCart } = useCart();
 
-    async function fetchProducts(){
+/* ---------------- FETCH ---------------- */
 
-      const querySnapshot = await getDocs(collection(db,"products"));
+useEffect(()=>{
 
-      const productList = querySnapshot.docs.map(doc=>({
-        id: doc.id,
-        ...doc.data()
-      })) as Product[];
+async function fetchProducts(){
 
-      setProducts(productList);
-    }
+const snapshot = await getDocs(collection(db,"products"));
 
-    fetchProducts();
+const list = snapshot.docs.map(doc=>({
+id:doc.id,
+...doc.data()
+})) as Product[];
 
-  },[]);
+setProducts(list);
+}
 
+fetchProducts();
 
-  // ⭐ FILTER PRODUCTS
-  const filteredProducts = products.filter(product => {
-
-    // show only featured on ALL
-    if(selectedCategory === "all"){
-      return product.featured === true;
-    }
-
-    // show category products
-    return product.category === selectedCategory;
-  });
+},[]);
 
 
+/* ---------------- STOCK CHECK (VERY IMPORTANT) ---------------- */
 
-  return (
+function isOutOfStock(product:Product){
 
-    <div style={{
-      padding:"20px",
-      background:"#0b0d11",
-      minHeight:"100vh"
-    }}>
+if(!product.sizes) return true;
 
+const quantities = Object.values(product.sizes);
 
-      {/* TOP STRIP */}
-      <div style={{
-        display:"flex",
-        justifyContent:"center",
-        gap:"20px",
-        flexWrap:"wrap",
-        fontSize:"13px",
-        color:"#aaa",
-        marginBottom:"10px"
-      }}>
-        <span>🚚 Fast Delivery</span>
-        <span>✔ Authentic Products</span>
-        <span>💬 WhatsApp Support</span>
-        <span>🔁 Easy Returns</span>
-      </div>
+if(quantities.length === 0) return true;
+
+return quantities.every(qty => Number(qty) <= 0);
+}
 
 
+/* ---------------- FILTER ---------------- */
 
-      {/* HERO */}
-      <div style={{
-        padding:"50px 20px",
-        borderRadius:"16px",
-        background:"linear-gradient(135deg,#111,#1a1f2b)",
-        color:"white",
-        marginBottom:"40px"
-      }}>
+const filteredProducts = products.filter(product=>{
 
-        <h1 style={{
-          fontSize:"clamp(32px,6vw,60px)",
-          margin:0,
-          fontWeight:"800"
-        }}>
-          Dominate The Pitch
-        </h1>
+// Homepage → featured only
+if(selectedCategory === "all"){
+return product.featured === true;
+}
 
-        <p style={{
-          opacity:0.7,
-          marginTop:"10px"
-        }}>
-          Elite Football Boots Built For Speed ⚡
-        </p>
+// Category pages → show all
+return product.category === selectedCategory;
 
-      </div>
+});
+
+
+/* ---------------- UI ---------------- */
+
+return(
+
+<div style={{
+padding:"20px",
+background:"#0b0d11",
+minHeight:"100vh"
+}}>
+
+{/* TOP BAR */}
+
+<div style={{
+display:"flex",
+justifyContent:"center",
+gap:"20px",
+flexWrap:"wrap",
+fontSize:"13px",
+color:"#aaa",
+marginBottom:"10px"
+}}>
+<span>🚚 Fast Delivery</span>
+<span>✔ Authentic Products</span>
+<span>💬 WhatsApp Support</span>
+<span>🔁 Easy Returns</span>
+</div>
 
 
 
-      {/* CATEGORY FILTER */}
-      <div style={{
-        display:"flex",
-        gap:"10px",
-        flexWrap:"wrap",
-        marginBottom:"30px"
-      }}>
+{/* HERO */}
 
-        {["all","boots","jerseys","gloves","jackets","balls","gear"].map(cat=>(
-          <button
-            key={cat}
-            onClick={()=>setSelectedCategory(cat)}
-            style={{
-              padding:"8px 18px",
-              borderRadius:"999px",
-              border:"1px solid #222",
-              background:selectedCategory===cat ? "#fff" : "transparent",
-              color:selectedCategory===cat ? "#000" : "#aaa",
-              cursor:"pointer",
-              fontWeight:"600"
-            }}
-          >
-            {cat.toUpperCase()}
-          </button>
-        ))}
+<div style={{
+padding:"50px 20px",
+borderRadius:"16px",
+background:"linear-gradient(135deg,#111,#1a1f2b)",
+color:"white",
+marginBottom:"40px"
+}}>
 
-      </div>
+<h1 style={{
+fontSize:"clamp(32px,6vw,60px)",
+margin:0,
+fontWeight:"800"
+}}>
+Dominate The Pitch
+</h1>
 
+<p style={{
+opacity:0.7,
+marginTop:"10px"
+}}>
+Elite Football Boots Built For Speed ⚡
+</p>
+
+</div>
 
 
-      {/* PRODUCT GRID */}
-      <div style={{
-        display:"grid",
-        gridTemplateColumns:"repeat(auto-fit, minmax(180px,1fr))",
-        gap:"22px"
-      }}>
 
-        {filteredProducts.map(product=>{
+{/* CATEGORY */}
 
-          const isOutOfStock = Object.values(product.sizes || {}).every(
-            qty => Number(qty) === 0
-          );
+<div style={{
+display:"flex",
+gap:"10px",
+flexWrap:"wrap",
+marginBottom:"30px"
+}}>
 
-          return(
+{["all","boots","jerseys","gloves","jackets","balls","gear"].map(cat=>(
 
-            <Link href={`/product/${product.id}`} key={product.id}>
+<button
+key={cat}
+onClick={()=>setSelectedCategory(cat)}
+style={{
+padding:"8px 18px",
+borderRadius:"999px",
+border:"1px solid #222",
+background:selectedCategory===cat ? "#fff" : "transparent",
+color:selectedCategory===cat ? "#000" : "#aaa",
+cursor:"pointer",
+fontWeight:"600"
+}}
+>
+{cat.toUpperCase()}
+</button>
 
-              <div style={{
-                background:"#11151c",
-                padding:"16px",
-                borderRadius:"14px",
-                position:"relative",
-                cursor:"pointer",
-                transition:"0.25s"
-              }}>
+))}
 
-                {/* FEATURED BADGE */}
-                {product.featured && (
-                  <div style={{
-                    position:"absolute",
-                    top:"12px",
-                    left:"12px",
-                    background:"#22c55e",
-                    color:"#fff",
-                    padding:"6px 12px",
-                    borderRadius:"8px",
-                    fontSize:"12px",
-                    fontWeight:"700"
-                  }}>
-                    Featured
-                  </div>
-                )}
+</div>
 
 
-                <img
-                  src={product.image}
-                  style={{
-                    width:"100%",
-                    height:"200px",
-                    objectFit:"contain"
-                  }}
-                />
 
-                <h3 style={{
-                  color:"#fff",
-                  fontSize:"16px",
-                  marginTop:"10px"
-                }}>
-                  {product.name}
-                </h3>
+{/* GRID */}
 
-                <p style={{
-                  color:"#9ca3af",
-                  fontWeight:"600"
-                }}>
-                  ₹{product.price}
-                </p>
+<div style={{
+display:"grid",
+gridTemplateColumns:"repeat(auto-fit, minmax(180px,1fr))",
+gap:"22px"
+}}>
 
+{filteredProducts.map(product=>{
 
-                <button
-                  disabled={isOutOfStock}
-                  onClick={(e)=>{
-                    e.preventDefault();
-                    if(isOutOfStock) return;
-                    setCart([...cart, product]);
-                  }}
+const out = isOutOfStock(product);
 
-                  style={{
-                    marginTop:"8px",
-                    width:"100%",
-                    padding:"10px",
-                    borderRadius:"8px",
-                    border:"none",
-                    fontWeight:"700",
-                    background:isOutOfStock ? "#333" : "#fff",
-                    color:isOutOfStock ? "#777" : "#000",
-                    cursor:isOutOfStock ? "not-allowed" : "pointer"
-                  }}
-                >
+return(
 
-                  {isOutOfStock ? "Out of Stock" : "Add To Cart"}
+<Link href={`/product/${product.id}`} key={product.id}>
 
-                </button>
+<div style={{
+background:"#11151c",
+padding:"16px",
+borderRadius:"14px",
+position:"relative",
+cursor:"pointer"
+}}>
 
-              </div>
+{/* FEATURED BADGE */}
 
-            </Link>
+{product.featured && (
+<div style={{
+position:"absolute",
+top:"12px",
+left:"12px",
+background:"#22c55e",
+color:"#fff",
+padding:"6px 12px",
+borderRadius:"8px",
+fontSize:"12px",
+fontWeight:"700"
+}}>
+Featured
+</div>
+)}
 
-          );
+<img
+src={product.image}
+style={{
+width:"100%",
+height:"200px",
+objectFit:"contain"
+}}
+/>
 
-        })}
+<h3 style={{
+color:"#fff",
+fontSize:"16px",
+marginTop:"10px"
+}}>
+{product.name}
+</h3>
 
-      </div>
+<p style={{
+color:"#9ca3af",
+fontWeight:"600"
+}}>
+₹{product.price}
+</p>
 
-    </div>
+<button
+disabled={out}
+onClick={(e)=>{
+e.preventDefault();
+if(out) return;
+setCart([...cart,product]);
+}}
+style={{
+marginTop:"8px",
+width:"100%",
+padding:"10px",
+borderRadius:"8px",
+border:"none",
+fontWeight:"700",
+background:out ? "#333" : "#fff",
+color:out ? "#777" : "#000",
+cursor:out ? "not-allowed" : "pointer"
+}}
+>
 
-  );
+{out ? "Out of Stock" : "Add To Cart"}
+
+</button>
+
+</div>
+
+</Link>
+
+);
+
+})}
+
+</div>
+
+</div>
+);
 }

@@ -1,88 +1,94 @@
 'use client';
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { db } from "@/lib/firebase";
 import { collection, addDoc } from "firebase/firestore";
-import { useEffect } from "react";
 
 export default function AdminPage(){
 
-const bootSizes = ["6","6.5","7","7.5","8","8.5","9","9.5","10","10.5","11"];
-const jerseySizes = ["S","M","L","XL"];
-const gloveSizes = ["7","8","9","10"];
-const jacketSizes = ["S","M","L","XL"];
-const ballSizes = ["3","4","5"];
-const [featured, setFeatured] = useState(false);
-const [image,setImage] = useState("");
+/* ---------------- SIZES ---------------- */
+
+const sizeMap:any = {
+  boots:["6","6.5","7","7.5","8","8.5","9","9.5","10","10.5","11"],
+  jerseys:["S","M","L","XL"],
+  gloves:["7","8","9","10"],
+  jackets:["S","M","L","XL"],
+  balls:["3","4","5"],
+  gear:["Standard"]
+};
+
+/* ---------------- STATE ---------------- */
+
 const [name,setName] = useState("");
-const [category,setCategory] = useState("boots");
 const [price,setPrice] = useState("");
-const [sizes,setSizes] = useState(
-  Object.fromEntries(bootSizes.map(size => [size,""]))
+const [image,setImage] = useState("");
+const [category,setCategory] = useState("boots");
+const [featured,setFeatured] = useState(false);
+
+const [sizes,setSizes] = useState<Record<string,number>>({});
+
+/* ---------------- AUTO SIZE CHANGE ---------------- */
+
+useEffect(()=>{
+
+const selectedSizes = sizeMap[category];
+
+const emptyStock = Object.fromEntries(
+selectedSizes.map((size:string)=>[size,""])
 );
 
-useEffect(() => {
+setSizes(emptyStock);
 
- let selectedSizes = bootSizes;
+},[category]);
 
- if(category === "jerseys") selectedSizes = jerseySizes;
- if(category === "gloves") selectedSizes = gloveSizes;
- if(category === "jackets") selectedSizes = jacketSizes;
- if(category === "balls") selectedSizes = ballSizes;
-
- setSizes(
-   Object.fromEntries(selectedSizes.map(size => [size, ""]))
- );
-
-}, [category]);
-
+/* ---------------- ADD PRODUCT ---------------- */
 
 async function addProduct(){
 
-if(!name || !price){
+if(!name || !price || !image){
 alert("Fill all fields!");
+return;
+}
+
+// ✅ stop zero-stock products
+if(Object.values(sizes).every(qty => qty <= 0)){
+alert("Add stock before creating product");
 return;
 }
 
 await addDoc(collection(db,"products"),{
 name,
 price:Number(price),
-category,
 image,
-sizes:Object.fromEntries(
-  bootSizes.map(size=>[
-    size,
-    Number(sizes[size]) || 0
-  ])
-),
+category,
+sizes,
 featured,
-createdAt: new Date()
+createdAt:new Date()
 });
 
 alert("✅ Product Added!");
 
+/* RESET FORM */
+
 setName("");
 setPrice("");
 setImage("");
-setCategory("");
-setSizes(
-  Object.fromEntries(
-    bootSizes.map(size => [size,""])
-  )
-);
+setFeatured(false);
+setCategory("boots");
+
 }
 
 return(
 
-<div style={{padding:"40px"}}>
+<div style={{padding:"40px",color:"white"}}>
 
 <h1>OWNER DASHBOARD</h1>
 
 <div style={{
 display:"flex",
 flexDirection:"column",
-gap:"10px",
-maxWidth:"400px"
+gap:"12px",
+maxWidth:"420px"
 }}>
 
 <input
@@ -98,20 +104,16 @@ style={{
 background:"#111",
 color:"#fff",
 padding:"10px",
-borderRadius:"8px",
-border:"1px solid rgba(255,255,255,0.1)",
-outline:"none",
-width:"100%"
+borderRadius:"8px"
 }}
 >
 
-<option value="">Select Category</option>
 <option value="boots">Boots</option>
 <option value="jerseys">Jerseys</option>
 <option value="gloves">Gloves</option>
 <option value="jackets">Jackets</option>
 <option value="balls">Balls</option>
-<option value="gear">Gear & Essentials</option>
+<option value="gear">Gear</option>
 
 </select>
 
@@ -127,7 +129,7 @@ value={image}
 onChange={(e)=>setImage(e.target.value)}
 />
 
-<label style={{color:"white"}}>
+<label>
 <input
 type="checkbox"
 checked={featured}
@@ -136,74 +138,41 @@ onChange={(e)=>setFeatured(e.target.checked)}
  Featured Product
 </label>
 
-<h3>Sizes</h3>
+<h3>Stock</h3>
 
-{/* BOOTS */}
-{category === "boots" && bootSizes.map((size) => (
-  <input
-    key={size}
-    placeholder={`Size ${size} stock`}
-    value={sizes[size] || ""}
-    onChange={(e) =>
-      setSizes({ ...sizes, [size]: e.target.value })
-    }
-  />
+{Object.keys(sizes).map(size => (
+
+<input
+key={size}
+placeholder={`Size ${size} stock`}
+value={sizes[size] || ""}
+onChange={(e)=>
+setSizes({
+...sizes,
+[size]:Number(e.target.value)
+})
+}
+/>
+
 ))}
 
-{/* JERSEYS */}
-{category === "jerseys" && jerseySizes.map((size) => (
-  <input
-    key={size}
-    placeholder={`Size ${size} stock`}
-    value={sizes[size] || ""}
-    onChange={(e) =>
-      setSizes({ ...sizes, [size]: e.target.value })
-    }
-  />
-))}
+<button
+onClick={addProduct}
+style={{
+padding:"12px",
+background:"#22c55e",
+border:"none",
+borderRadius:"10px",
+fontWeight:"700",
+cursor:"pointer"
+}}
+>
 
-{/* GLOVES */}
-{category === "gloves" && gloveSizes.map((size) => (
-  <input
-    key={size}
-    placeholder={`Size ${size} stock`}
-    value={sizes[size] || ""}
-    onChange={(e) =>
-      setSizes({ ...sizes, [size]: e.target.value })
-    }
-  />
-))}
-
-{/* JACKETS */}
-{category === "jackets" && jacketSizes.map((size) => (
-  <input
-    key={size}
-    placeholder={`Size ${size} stock`}
-    value={sizes[size] || ""}
-    onChange={(e) =>
-      setSizes({ ...sizes, [size]: e.target.value })
-    }
-  />
-))}
-
-{/* BALLS */}
-{category === "balls" && ballSizes.map((size) => (
-  <input
-    key={size}
-    placeholder={`Size ${size} stock`}
-    value={sizes[size] || ""}
-    onChange={(e) =>
-      setSizes({ ...sizes, [size]: e.target.value })
-    }
-  />
-))}
-
-<button onClick={addProduct}>
 Add Product
+
 </button>
 
 </div>
-
 </div>
 );
 }
