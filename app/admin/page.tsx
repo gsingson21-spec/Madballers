@@ -3,17 +3,38 @@
 import { useState } from "react";
 import { db } from "@/lib/firebase";
 import { collection, addDoc } from "firebase/firestore";
+import { useEffect } from "react";
 
 export default function AdminPage(){
 
+const bootSizes = ["6","6.5","7","7.5","8","8.5","9","9.5","10","10.5","11"];
+const jerseySizes = ["S","M","L","XL"];
+const gloveSizes = ["7","8","9","10"];
+const jacketSizes = ["S","M","L","XL"];
+const ballSizes = ["3","4","5"];
+const [featured, setFeatured] = useState(false);
 const [image,setImage] = useState("");
-const bootSizes = [6,6.5,7,7.5,8,8.5,9,9.5,10,10.5,11];
 const [name,setName] = useState("");
 const [category,setCategory] = useState("boots");
 const [price,setPrice] = useState("");
 const [sizes,setSizes] = useState(
   Object.fromEntries(bootSizes.map(size => [size,""]))
 );
+
+useEffect(() => {
+
+ let selectedSizes = bootSizes;
+
+ if(category === "jerseys") selectedSizes = jerseySizes;
+ if(category === "gloves") selectedSizes = gloveSizes;
+ if(category === "jackets") selectedSizes = jacketSizes;
+ if(category === "balls") selectedSizes = ballSizes;
+
+ setSizes(
+   Object.fromEntries(selectedSizes.map(size => [size, ""]))
+ );
+
+}, [category]);
 
 
 async function addProduct(){
@@ -34,6 +55,7 @@ sizes:Object.fromEntries(
     Number(sizes[size]) || 0
   ])
 ),
+featured,
 createdAt: new Date()
 });
 
@@ -41,6 +63,8 @@ alert("✅ Product Added!");
 
 setName("");
 setPrice("");
+setImage("");
+setCategory("");
 setSizes(
   Object.fromEntries(
     bootSizes.map(size => [size,""])
@@ -103,15 +127,73 @@ value={image}
 onChange={(e)=>setImage(e.target.value)}
 />
 
+<label style={{color:"white"}}>
+<input
+type="checkbox"
+checked={featured}
+onChange={(e)=>setFeatured(e.target.checked)}
+/>
+ Featured Product
+</label>
+
 <h3>Sizes</h3>
 
-{bootSizes.map((size)=>(
+{/* BOOTS */}
+{category === "boots" && bootSizes.map((size) => (
   <input
     key={size}
     placeholder={`Size ${size} stock`}
-    value={sizes[size]}
-    onChange={(e)=>
-      setSizes({...sizes,[size]:e.target.value})
+    value={sizes[size] || ""}
+    onChange={(e) =>
+      setSizes({ ...sizes, [size]: e.target.value })
+    }
+  />
+))}
+
+{/* JERSEYS */}
+{category === "jerseys" && jerseySizes.map((size) => (
+  <input
+    key={size}
+    placeholder={`Size ${size} stock`}
+    value={sizes[size] || ""}
+    onChange={(e) =>
+      setSizes({ ...sizes, [size]: e.target.value })
+    }
+  />
+))}
+
+{/* GLOVES */}
+{category === "gloves" && gloveSizes.map((size) => (
+  <input
+    key={size}
+    placeholder={`Size ${size} stock`}
+    value={sizes[size] || ""}
+    onChange={(e) =>
+      setSizes({ ...sizes, [size]: e.target.value })
+    }
+  />
+))}
+
+{/* JACKETS */}
+{category === "jackets" && jacketSizes.map((size) => (
+  <input
+    key={size}
+    placeholder={`Size ${size} stock`}
+    value={sizes[size] || ""}
+    onChange={(e) =>
+      setSizes({ ...sizes, [size]: e.target.value })
+    }
+  />
+))}
+
+{/* BALLS */}
+{category === "balls" && ballSizes.map((size) => (
+  <input
+    key={size}
+    placeholder={`Size ${size} stock`}
+    value={sizes[size] || ""}
+    onChange={(e) =>
+      setSizes({ ...sizes, [size]: e.target.value })
     }
   />
 ))}
