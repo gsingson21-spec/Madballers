@@ -3,12 +3,13 @@
 import { createContext, useContext, useState } from "react";
 
 type Product = {
-id: string;
-name: string;
-price: number;
-image: string;
-stock: number;
-category: string;
+  id: string;
+  name: string;
+  price: number;
+  image: string;
+  category?: string;
+  featured?: boolean;
+  sizes?: Record<string, number>;
 };
 
 type CartContextType = {
