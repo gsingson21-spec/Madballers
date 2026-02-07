@@ -24,7 +24,10 @@ const [price,setPrice] = useState("");
 const [image,setImage] = useState("");
 const [category,setCategory] = useState("boots");
 const [featured,setFeatured] = useState(false);
-
+const resetSizes = Object.fromEntries(
+  sizeMap["boots"].map((size:string)=>[size,""])
+);
+setSizes(resetSizes);
 const [sizes,setSizes] = useState<Record<string,number>>({});
 
 /* ---------------- AUTO SIZE CHANGE ---------------- */
