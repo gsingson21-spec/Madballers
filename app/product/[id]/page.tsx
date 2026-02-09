@@ -178,15 +178,22 @@ cursor: out ? "not-allowed":"pointer"
 
 <button
 disabled={!selectedSize}
-onClick={()=>addToCart(product, selectedSize!)}
+onClick={() =>
+  addToCart({
+    id: product.id,
+    name: product.name,
+    price: product.price,
+    image: product.images?.[0] || product.image,
+    selectedSize: selectedSize!
+  })
+}
 style={{
-width:"100%",
 padding:"16px",
-background:selectedSize ? "#22c55e" : "#333",
+background:"#22c55e",
 border:"none",
-borderRadius:"12px",
+borderRadius:"10px",
 fontWeight:"700",
-cursor:selectedSize ? "pointer":"not-allowed"
+cursor: selectedSize ? "pointer" : "not-allowed"
 }}
 >
 {selectedSize ? "Add To Cart":"Select Size First"}

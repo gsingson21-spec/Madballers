@@ -11,9 +11,10 @@ export default function Home(){
 
 const [products,setProducts] = useState<Product[]>([]);
 const [selectedCategory,setSelectedCategory] = useState("all");
-const {cart, addToCart, removeFromCart} = useCart();
 
-/* ---------- FETCH ---------- */
+const {addToCart} = useCart();
+
+/* FETCH */
 
 useEffect(()=>{
 
@@ -34,31 +35,18 @@ fetchProducts();
 },[]);
 
 
-/* ---------- STOCK CHECK ---------- */
-
-function isOutOfStock(product:Product){
-
-if(!product.sizes) return true;
-
-return Object.values(product.sizes).every((qty:number)=> qty <= 0);
-
-}
-
-
-/* ---------- FILTER ---------- */
+/* FILTER */
 
 const filteredProducts = products.filter(product=>{
 
-if(selectedCategory === "all"){
-return product.featured === true;
+if(selectedCategory==="all"){
+return product.featured===true;
 }
 
-return product.category === selectedCategory;
+return product.category===selectedCategory;
 
 });
 
-
-/* ---------- UI ---------- */
 
 return(
 
@@ -77,18 +65,8 @@ background:"linear-gradient(135deg,#111,#1a1f2b)",
 color:"white",
 marginBottom:"30px"
 }}>
-
-<h1 style={{
-fontSize:"clamp(28px,5vw,52px)",
-margin:0
-}}>
-Dominate The Pitch
-</h1>
-
-<p style={{opacity:0.7}}>
-Elite Football Boots Built For Speed ⚡
-</p>
-
+<h1>Dominate The Pitch</h1>
+<p>Elite Football Boots Built For Speed ⚡</p>
 </div>
 
 
@@ -113,8 +91,7 @@ border:"1px solid #222",
 background:selectedCategory===cat ? "#fff" : "transparent",
 color:selectedCategory===cat ? "#000" : "#aaa",
 cursor:"pointer"
-}}
->
+}}>
 {cat.toUpperCase()}
 </button>
 
@@ -127,38 +104,39 @@ cursor:"pointer"
 
 <div style={{
 display:"grid",
-gridTemplateColumns:"repeat(auto-fit, minmax(220px,1fr))",
+gridTemplateColumns:"repeat(auto-fit,minmax(220px,1fr))",
 gap:"18px"
 }}>
 
 {filteredProducts.map(product=>{
 
-const out = isOutOfStock(product);
+const sizes = Object.entries(product.sizes || {})
+.filter(([_,stock])=> Number(stock) > 0);
 
 return(
 
-<Link href={`/product/${product.id}`} key={product.id}>
-
-<div style={{
+<div key={product.id}
+style={{
 background:"#11151c",
 padding:"14px",
-borderRadius:"12px",
-cursor:"pointer"
+borderRadius:"12px"
 }}>
+
+<Link href={`/product/${product.id}`}>
 
 <img
 src={product.images?.[0] || product.image}
 style={{
 width:"100%",
 height:"180px",
-objectFit:"contain"
+objectFit:"contain",
+cursor:"pointer"
 }}
 />
 
-<h3 style={{
-color:"#fff",
-fontSize:"15px"
-}}>
+</Link>
+
+<h3 style={{color:"#fff"}}>
 {product.name}
 </h3>
 
@@ -166,33 +144,34 @@ fontSize:"15px"
 ₹{product.price}
 </p>
 
+
+{/* SIZE QUICK PICK */}
+
+<div style={{
+display:"flex",
+gap:"6px",
+flexWrap:"wrap"
+}}>
+
+{sizes.map(([size])=>(
 <button
-disabled={out}
-onClick={(e)=>{
-e.preventDefault();
-if(out) return;
-addToCart(product);
-}}
+key={size}
+onClick={()=>addToCart(product,size)}
 style={{
-marginTop:"6px",
-width:"100%",
-padding:"8px",
+padding:"6px 10px",
+background:"#222",
+border:"1px solid #333",
+color:"white",
 borderRadius:"6px",
-border:"none",
-background: out ? "#1a1a1a" : "#ffffff",
-color: out ? "#666" : "#000",
-opacity: out ? 0.6 : 1,
-cursor:out ? "not-allowed":"pointer"
-}}
->
-
-{out ? "Out of Stock":"Add To Cart"}
-
+cursor:"pointer"
+}}>
+{size}
 </button>
+))}
 
 </div>
 
-</Link>
+</div>
 
 );
 
