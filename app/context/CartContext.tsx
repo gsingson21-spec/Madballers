@@ -1,75 +1,75 @@
 'use client';
 
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 
-/* CART ITEM TYPE */
-type CartItem = {
-  id:string;
-  name:string;
-  price:number;
-  image?:string;
-  images?:string[];
-  selectedSize:string;
+/* ✅ CART TYPE */
+export type CartItem = {
+  id: string;
+  name: string;
+  price: number;
+  image: string;
+  size: string;
+  category: string;
 };
 
-/* CONTEXT TYPE */
 type CartContextType = {
   cart: CartItem[];
-  addToCart:(product:any,size:string)=>void;
-  removeFromCart:(index:number)=>void;
-  clearCart:()=>void;
+  addToCart: (item: CartItem) => void;
+  removeFromCart: (index: number) => void;
+  clearCart: () => void;
 };
 
 const CartContext = createContext<CartContextType | null>(null);
 
-export function CartProvider({children}:{children:React.ReactNode}){
+export function CartProvider({ children }: { children: React.ReactNode }) {
 
-const [cart,setCart] = useState<CartItem[]>([]);
+  const [cart, setCart] = useState<CartItem[]>([]);
 
-/* ADD */
-function addToCart(product:any,size:string){
+  /* ✅ LOAD CART FROM LOCAL STORAGE */
+  useEffect(() => {
+    const storedCart = localStorage.getItem("cart");
 
-const item:CartItem = {
-id:product.id,
-name:product.name,
-price:product.price,
-image:product.images?.[0] || product.image,
-images:product.images,
-selectedSize:size
-};
+    if (storedCart) {
+      setCart(JSON.parse(storedCart));
+    }
+  }, []);
 
-setCart(prev=>[...prev,item]);
+  /* ✅ SAVE CART */
+  useEffect(() => {
+    localStorage.setItem("cart", JSON.stringify(cart));
+  }, [cart]);
+
+  function addToCart(item: CartItem) {
+    setCart(prev => [...prev, item]);
+  }
+
+  function removeFromCart(index: number) {
+    setCart(prev => prev.filter((_, i) => i !== index));
+  }
+
+  function clearCart() {
+    setCart([]);
+  }
+
+  return (
+    <CartContext.Provider value={{
+      cart,
+      addToCart,
+      removeFromCart,
+      clearCart
+    }}>
+      {children}
+    </CartContext.Provider>
+  );
 }
 
-/* REMOVE */
-function removeFromCart(index:number){
-setCart(prev=> prev.filter((_,i)=> i!==index));
-}
+export function useCart() {
 
-/* CLEAR */
-function clearCart(){
-setCart([]);
-}
+  const context = useContext(CartContext);
 
-return(
-<CartContext.Provider value={{
-cart,
-addToCart,
-removeFromCart,
-clearCart
-}}>
-{children}
-</CartContext.Provider>
-);
-}
+  if (!context) {
+    throw new Error("useCart must be used inside CartProvider");
+  }
 
-export function useCart(){
-
-const context = useContext(CartContext);
-
-if(!context){
-throw new Error("useCart must be used inside CartProvider");
-}
-
-return context;
+  return context;
 }
