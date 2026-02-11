@@ -127,11 +127,12 @@ alignItems:"center"
 }}>
 
 <img
-src={product.images?.[0]}
-width={100}
+src={product.images?.[0] || product.image || "/placeholder.png"}
+width={90}
 style={{
-borderRadius:"12px",
-objectFit:"cover"
+borderRadius:"10px",
+objectFit:"cover",
+height:"90px"
 }}
 />
 

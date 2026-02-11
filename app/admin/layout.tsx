@@ -88,6 +88,10 @@ color:"#22c55e"
 Dashboard
 </Link>
 
+<Link href="/admin/add-product" style={nav("/admin/add-product")}>
+Add Product
+</Link>
+
 <Link href="/admin/orders" style={nav("/admin/orders")}>
 Orders
 </Link>
