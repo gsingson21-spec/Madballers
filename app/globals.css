@@ -1,3 +1,16 @@
+:root{
+
+--primary:#ff7a00;
+--primary-hover:#ff9a3d;
+
+--bg:#0a0a0a;
+--card:#111111;
+
+--text:#ffffff;
+--muted:#9ca3af;
+
+}
+
 *{
   margin:0;
   padding:0;
@@ -80,5 +93,19 @@ transform:translateY(-2px);
 --muted: #9ca3af;
 
 --border: rgba(255,122,0,.18);
+
+}
+
+@media(max-width:768px){
+
+.hero{
+height:70vh;
+padding:80px 24px;
+}
+
+.productWrapper{
+margin-top:-60px;
+padding:20px;
+}
 
 }

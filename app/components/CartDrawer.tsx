@@ -55,7 +55,7 @@ alignItems:"center"
 <button
 onClick={()=>setOpen(false)}
 style={{
-background:"transparent",
+background:"var(--primary)",
 border:"none",
 color:"white",
 fontSize:"22px",

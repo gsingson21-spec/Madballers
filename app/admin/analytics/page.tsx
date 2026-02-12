@@ -64,7 +64,7 @@ color:"#22c55e"
 }
 
 const card = {
-background:"linear-gradient(145deg,#07122a,#020617)",
+background:"var(--card)",
 padding:"40px",
 borderRadius:"18px",
 minWidth:"260px",

@@ -35,7 +35,7 @@ load();
 
 const card = {
 flex:1,
-background:"linear-gradient(145deg,#07122a,#020617)",
+background:"var(--card)",
 padding:"35px",
 borderRadius:"18px",
 border:"1px solid rgba(255,122,0,.15)",

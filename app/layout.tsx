@@ -1,51 +1,32 @@
-import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { CartProvider } from "./context/CartContext";
 import Navbar from "./components/Navbar";
-import Footer from "./components/Footer";
-import FloatingWhatsApp from "./components/FloatingWhatsApp";
-import Loader from "./components/Loader";
-
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
 
 export const metadata = {
-  title: 'Mad Ballers',
-  description: 'Premium Football Boots, Jerseys & Gear',
-}
+  title: "Mad Ballers",
+  description: "Elite Sports Store",
+};
 
 export default function RootLayout({
- children,
+  children,
 }: {
- children: React.ReactNode;
+  children: React.ReactNode;
 }) {
- return (
+
+return (
 <html lang="en">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet"/>
-<body style={{fontFamily:"Inter, sans-serif"}}>
+<body style={{
+  margin:0,
+  background:"#0a0a0a",
+  fontFamily:"system-ui"
+}}>
 
 <CartProvider>
-  
-<Loader />
-
 <Navbar />
-
 {children}
-
-<Footer />
-
 </CartProvider>
 
 </body>
 </html>
- );
+);
 }

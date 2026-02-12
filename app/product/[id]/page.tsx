@@ -148,7 +148,7 @@ padding:"10px 22px",
 borderRadius:"999px",
 border:"1px solid rgba(34,197,94,.25)",
 background:selectedCategory===cat
-? "#22c55e"
+? "var(--primary)"
 : "transparent",
 color:selectedCategory===cat
 ? "#000"
@@ -216,11 +216,11 @@ objectFit:"contain"
 
 </Link>
 
-<h3 style={{color:"#fff"}}>
+<h3 style={{color:"var(--text)"}}>
 {product.name}
 </h3>
 
-<p style={{color:"#22c55e",fontWeight:"700"}}>
+<p style={{color:"var(--text)",fontWeight:"700"}}>
 ₹{product.price}
 </p>
 
@@ -292,16 +292,16 @@ marginBottom:"12px"
 }}
 />
 
-<h2 style={{color:"white"}}>
+<h2 style={{color:"var(--text)"}}>
 {popupProduct.name}
 </h2>
 
-<p style={{color:"#22c55e"}}>
+<p style={{color:"var(--text)"}}>
 ₹{popupProduct.price}
 </p>
 
 
-<h3 style={{color:"white"}}>Select Size</h3>
+<h3 style={{color:"var(--text)"}}>Select Size</h3>
 
 <div style={{
 display:"flex",
@@ -326,7 +326,7 @@ borderRadius:"8px",
 border:selectedSize===size
 ? "2px solid #22c55e"
 : "1px solid #333",
-background:"#020617",
+background:"var(--primary)",
 color:"white",
 cursor:"pointer"
 }}

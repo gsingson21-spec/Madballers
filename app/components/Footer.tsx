@@ -22,7 +22,7 @@ export default function Footer() {
         {/* BRAND */}
         <h2 style={{
           margin: 0,
-          color: "white",
+          color: "var(--text)",
           fontSize: "22px",
           letterSpacing: "1px"
         }}>

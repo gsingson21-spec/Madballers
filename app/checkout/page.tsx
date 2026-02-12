@@ -136,9 +136,9 @@ fontWeight:"800"
 <button
 onClick={()=>removeFromCart(item.id,item.size)}
 style={{
-background:"#ef4444",
+background:"var(--primary)",
 border:"none",
-color:"white",
+color:"var(--text)",
 padding:"10px 14px",
 borderRadius:"10px",
 cursor:"pointer",
@@ -166,7 +166,7 @@ alignItems:"center"
 
 <h2>Total</h2>
 
-<h2 style={{color:"#22c55e"}}>
+<h2 style={{color:"var(--text)"}}>
 ₹{total}
 </h2>
 
@@ -188,7 +188,7 @@ fontWeight:"900",
 fontSize:"18px",
 cursor:"pointer",
 
-background:"linear-gradient(135deg,#f97316,#ea580c)",
+background:"var(--primary)",
 boxShadow:"0 20px 60px rgba(249,115,22,.35)"
 }}>
 Order on WhatsApp 🚀

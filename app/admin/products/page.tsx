@@ -171,7 +171,7 @@ LOW STOCK ⚠️
 <button
 onClick={()=>deleteProduct(product.id)}
 style={{
-background:"#ef4444",
+background:"var(--primary)",
 border:"none",
 color:"white",
 padding:"10px 16px",

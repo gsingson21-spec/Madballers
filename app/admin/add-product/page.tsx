@@ -219,7 +219,7 @@ onClick={addProduct}
 disabled={loading}
 style={{
 padding:"18px",
-background:"#22c55e",
+background:"var(--primary)",
 border:"none",
 borderRadius:"14px",
 fontWeight:"900",
