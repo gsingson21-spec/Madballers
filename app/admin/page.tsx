@@ -38,7 +38,7 @@ flex:1,
 background:"linear-gradient(145deg,#07122a,#020617)",
 padding:"35px",
 borderRadius:"18px",
-border:"1px solid rgba(34,197,94,.15)",
+border:"1px solid rgba(255,122,0,.15)",
 boxShadow:"0 20px 60px rgba(0,0,0,.7)"
 };
 

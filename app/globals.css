@@ -67,3 +67,18 @@ transition:.25s;
 button:hover{
 transform:translateY(-2px);
 }
+
+:root{
+
+--bg: #0B0B0F;
+--card: #111217;
+
+--orange: #FF7A00;
+--orangeGlow: #ff9a3d;
+
+--text: #ffffff;
+--muted: #9ca3af;
+
+--border: rgba(255,122,0,.18);
+
+}

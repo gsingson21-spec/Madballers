@@ -63,9 +63,9 @@ display:"flex",
 justifyContent:"space-between",
 alignItems:"center",
 padding:"18px 48px",
-background:"rgba(2,6,23,.75)",
-backdropFilter:"blur(16px)",
-borderBottom:"1px solid rgba(34,197,94,.12)",
+background:"rgba(10,10,14,.75)",
+backdropFilter:"blur(18px)",
+borderBottom:"1px solid rgba(255,122,0,.15)",
 position:"sticky",
 top:0,
 zIndex:9999
@@ -80,21 +80,10 @@ letterSpacing:"1px",
 textDecoration:"none"
 }}>
 
-<span style={{
-color:"#22c55e"
-}}>
-Boots
-</span>
-
-<span style={{
-color:"white"
-}}>
-Vault
-</span>
+<span style={{color:"#FF7A00"}}>MAD</span>
+<span style={{color:"white"}}>BALLERS</span>
 
 </Link>
-
-
 
 {/* NAV RIGHT */}
 
@@ -189,15 +178,38 @@ Login
 
 <>
 <button
-onClick={()=>window.location.href="/track"}
 style={dropdownBtn}
+onClick={()=>window.location.href="/orders"}
+>
+My Orders
+</button>
+
+<button
+style={dropdownBtn}
+onClick={()=>window.location.href="/track"}
 >
 Track Order
 </button>
 
+{/* 🔥 ADMIN ACCESS */}
+{user?.email === "Gsingson21@gmail.com" && (
+
 <button
-onClick={()=>signOut(auth)}
+style={{
+...dropdownBtn,
+color:"#22c55e",
+fontWeight:"800"
+}}
+onClick={()=>window.location.href="/admin"}
+>
+⚡ Admin Panel
+</button>
+
+)}
+
+<button
 style={dropdownBtn}
+onClick={()=>signOut(auth)}
 >
 Logout
 </button>

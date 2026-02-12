@@ -72,35 +72,68 @@ minHeight:"100vh"
 
 {/* HERO */}
 
+{/* GOD HERO */}
+
 <div style={{
-padding:"60px 40px",
-borderRadius:"24px",
-background:"linear-gradient(135deg,#020617,#07131f)",
-color:"white",
-marginBottom:"50px",
-border:"1px solid rgba(34,197,94,.15)",
-boxShadow:"0 40px 120px rgba(0,0,0,.6)"
+
+height:"88vh",
+display:"flex",
+flexDirection:"column",
+justifyContent:"center",
+alignItems:"center",
+textAlign:"center",
+
+background:`
+linear-gradient(rgba(0,0,0,.75),rgba(0,0,0,.95)),
+url('/hero.jpg')
+`,
+
+backgroundSize:"cover",
+backgroundPosition:"center",
+
+borderBottom:"1px solid var(--border)"
 }}>
 
 <h1 style={{
-fontSize:"clamp(34px,6vw,64px)",
-margin:0,
-fontWeight:"800",
-letterSpacing:"-1px"
+fontSize:"clamp(48px,8vw,110px)",
+fontWeight:"900",
+letterSpacing:"-2px",
+color:"white"
 }}>
-Dominate The Pitch ⚽
+MAD BALLERS
 </h1>
 
 <p style={{
-opacity:.7,
-fontSize:"18px",
+color:"var(--orange)",
+fontWeight:"700",
+fontSize:"22px",
 marginTop:"10px"
 }}>
-Elite Football Boots Built For Speed
+Built Different.
+Play Different.
 </p>
 
-</div>
+<button style={{
 
+marginTop:"30px",
+padding:"18px 44px",
+
+background:"linear-gradient(135deg,#FF7A00,#ff9a3d)",
+
+border:"none",
+borderRadius:"14px",
+
+fontWeight:"900",
+fontSize:"18px",
+
+cursor:"pointer",
+
+boxShadow:"0 20px 80px rgba(255,122,0,.45)"
+}}>
+SHOP NOW
+</button>
+
+</div>
 
 {/* TRUST BAR */}
 
@@ -111,17 +144,18 @@ gap:"40px",
 flexWrap:"wrap",
 marginBottom:"60px",
 padding:"18px",
-background:"linear-gradient(90deg,#020617,#07131f)",
+background:"rgba(255,255,255,.03)",
+backdropFilter:"blur(10px)",
+border:"1px solid rgba(255,255,255,.05)",
 borderRadius:"14px",
 fontSize:"14px",
 fontWeight:"600",
-border:"1px solid rgba(34,197,94,.15)"
 }}>
-<span>✅ UPI Accepted</span>
-<span>💬 Order on WhatsApp</span>
-<span>🚚 Ships Across India</span>
-<span>🔒 Secure Ordering</span>
-<span>💳 UPI • GPay • PhonePe</span>
+<span>Premium Quality ⚡</span>
+<span>WhatsApp Orders 💬</span>
+<span>All India Shipping 🚚</span>
+<span>Secure Checkout 🔒</span>
+<span>UPI • GPay • PhonePe 💳</span>
 </div>
 
 
@@ -144,7 +178,7 @@ style={{
 padding:"10px 20px",
 borderRadius:"999px",
 border:"1px solid rgba(255,255,255,.08)",
-background:selectedCategory===cat ? "#22c55e" : "transparent",
+background:selectedCategory===cat ? "linear-gradient(135deg,#FF7A00,#ff9a3d)" : "transparent",
 color:selectedCategory===cat ? "#02120a" : "#aaa",
 cursor:"pointer",
 fontWeight:"700",
@@ -173,18 +207,18 @@ return(
 <div key={product.id}
 
 style={{
-background:"linear-gradient(145deg,#020617,#07131f)",
+background:"linear-gradient(145deg,#0f1016,#0a0b10)",
 padding:"22px",
 borderRadius:"20px",
 cursor:"pointer",
-border:"1px solid rgba(34,197,94,0.18)",
+border:"1px solid rgba(255,122,0,.12)",
 transition:"0.35s",
-boxShadow:"0 20px 50px rgba(0,0,0,.7)"
+boxShadow:"0 10px 40px rgba(0,0,0,.8)"
 }}
 
 onMouseEnter={(e)=>{
-e.currentTarget.style.transform="translateY(-10px)";
-e.currentTarget.style.boxShadow="0 45px 90px rgba(34,197,94,.15)";
+e.currentTarget.style.boxShadow="0 40px 120px rgba(255,122,0,.18)";
+e.currentTarget.style.transform="translateY(-12px)";
 }}
 
 onMouseLeave={(e)=>{
@@ -234,7 +268,7 @@ width:"100%",
 padding:"12px",
 borderRadius:"10px",
 border:"none",
-background: out ? "#111" : "#22c55e",
+background:"linear-gradient(135deg,#FF7A00,#ff9a3d)",
 color: out ? "#555" : "#02120a",
 fontWeight:"800",
 cursor: out ? "not-allowed" : "pointer"
@@ -332,7 +366,7 @@ borderRadius:"10px",
 border:selectedSize===size
 ? "2px solid #22c55e"
 : "1px solid #333",
-background:"#07131f",
+background:"linear-gradient(135deg,#FF7A00,#ff9a3d)",
 color:"white",
 cursor: out ? "not-allowed":"pointer"
 }}
@@ -367,7 +401,7 @@ setPopupProduct(null);
 style={{
 width:"100%",
 padding:"16px",
-background:selectedSize ? "#22c55e":"#111",
+background:selectedSize ? "linear-gradient(135deg,#FF7A00,#ff9a3d)": "#111",
 border:"none",
 borderRadius:"12px",
 fontWeight:"800",

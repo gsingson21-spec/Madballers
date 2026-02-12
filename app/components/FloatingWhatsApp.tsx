@@ -3,7 +3,7 @@ export default function FloatingWhatsApp(){
 return(
 
 <a
-href="https://wa.me/917996097779"
+href="https://wa.me/919366946633"
 target="_blank"
 style={{
 position:"fixed",

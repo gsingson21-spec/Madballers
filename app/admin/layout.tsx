@@ -23,7 +23,7 @@ useEffect(()=>{
 const unsub = onAuthStateChanged(auth,(user)=>{
 
 if(
-user?.email === "pushkarmanjunath11@gmail.com"
+user?.email === "Gsingson21@gmail.com"
 ){
 setAllowed(true);
 }else{
@@ -67,7 +67,8 @@ background:"linear-gradient(180deg,#020617,#000)"
 
 <div style={{
 width:"300px",
-background:"linear-gradient(180deg,#020617,#000)",
+background: "linear-gradient(135deg,#FF7A00,#ff9a3d)",
+color:"black",
 boxShadow:"20px 0 60px rgba(0,0,0,.8)",
 padding:"30px",
 borderRight:"1px solid rgba(255,255,255,.06)",

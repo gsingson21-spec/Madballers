@@ -44,8 +44,8 @@ export default function Footer() {
           fontSize: "14px",
           lineHeight: "1.8"
         }}>
-          <div>Email: pushkarmanjunath11@gmail.com</div>
-          <div>WhatsApp: +91 7996097779</div>
+          <div>Email: Gsingson21@gmail.com</div>
+          <div>WhatsApp: +91 9366946633</div>
         </div>
 
         <div style={{

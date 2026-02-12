@@ -5,6 +5,8 @@ import { CartProvider } from "./context/CartContext";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import FloatingWhatsApp from "./components/FloatingWhatsApp";
+import Loader from "./components/Loader";
+
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -17,7 +19,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata = {
-  title: 'Boots Vault',
+  title: 'Mad Ballers',
   description: 'Premium Football Boots, Jerseys & Gear',
 }
 
@@ -32,6 +34,8 @@ export default function RootLayout({
 <body style={{fontFamily:"Inter, sans-serif"}}>
 
 <CartProvider>
+  
+<Loader />
 
 <Navbar />
 
