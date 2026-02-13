@@ -1,316 +1,179 @@
 'use client';
 
-import Link from "next/link";
 import { useEffect, useState } from "react";
+import { useParams } from "next/navigation";
 import { db } from "@/lib/firebase";
-import { collection, getDocs } from "firebase/firestore";
+import { doc, getDoc } from "firebase/firestore";
 import { useCart } from "@/app/context/CartContext";
 import { Product } from "@/types/Product";
 
-export default function Home(){
+export default function ProductPage(){
 
-const [products,setProducts] = useState<Product[]>([]);
-const [selectedCategory,setSelectedCategory] = useState("all");
+const { id } = useParams();
+const { addToCart } = useCart();
 
-const {addToCart} = useCart();
-
-const [popupProduct,setPopupProduct] = useState<Product | null>(null);
+const [product,setProduct] = useState<Product | null>(null);
 const [selectedSize,setSelectedSize] = useState<string | null>(null);
+const [activeImage,setActiveImage] = useState(0);
 
-
-/* FETCH */
+/* FETCH SINGLE PRODUCT */
 
 useEffect(()=>{
 
-async function fetchProducts(){
+async function load(){
 
-const snapshot = await getDocs(collection(db,"products"));
+const ref = doc(db,"products",id as string);
+const snap = await getDoc(ref);
 
-const list = snapshot.docs.map(doc=>({
-id:doc.id,
-...doc.data()
-})) as Product[];
-
-setProducts(list);
+if(snap.exists()){
+setProduct({
+id:snap.id,
+...snap.data()
+} as Product);
 }
-
-fetchProducts();
-
-},[]);
-
-
-/* STOCK */
-
-function isOut(product:Product){
-
-if(!product.sizes) return true;
-
-return Object.values(product.sizes)
-.every((qty:number)=> qty <= 0);
 
 }
 
+load();
 
-/* FILTER */
+},[id]);
 
-const filtered = products.filter(product=>{
 
-if(selectedCategory === "all"){
-return product.featured === true;
+if(!product){
+return(
+<div style={{
+height:"100vh",
+display:"flex",
+justifyContent:"center",
+alignItems:"center",
+background:"#000",
+color:"white",
+fontSize:"24px"
+}}>
+Loading Product...
+</div>
+);
 }
-
-return product.category === selectedCategory;
-
-});
 
 
 return(
 
 <div style={{
+background:"#000",
+minHeight:"100vh",
+padding:"120px 7vw 80px",
+color:"white"
+}}>
+
+{/* MAIN GRID */}
+
+<div style={{
+display:"grid",
+gridTemplateColumns:"1.2fr 1fr",
+gap:"60px",
+alignItems:"start"
+}}>
+
+
+{/* 🔥 IMAGE SECTION */}
+
+<div>
+
+{/* BIG IMAGE */}
+
+<div style={{
+background:"#050505",
+borderRadius:"28px",
 padding:"40px",
-background:"linear-gradient(180deg,#020617,#020617,#000)",
-minHeight:"100vh"
+border:"1px solid #111"
 }}>
 
-
-{/* HERO */}
-
-<div style={{
-padding:"70px 40px",
-borderRadius:"20px",
-background:"linear-gradient(135deg,#020617,#07122a)",
-color:"white",
-marginBottom:"40px",
-border:"1px solid rgba(34,197,94,.15)"
-}}>
-
-<h1 style={{
-fontSize:"clamp(36px,6vw,64px)",
-margin:0,
-fontWeight:"800",
-letterSpacing:"-1px"
-}}>
-Dominate The Pitch ⚡
-</h1>
-
-<p style={{
-opacity:.7,
-marginTop:"10px",
-fontSize:"18px"
-}}>
-India’s Premium Football Store
-</p>
+<img
+src={product.images?.[activeImage]}
+style={{
+width:"100%",
+height:"520px",
+objectFit:"contain"
+}}
+/>
 
 </div>
 
 
-{/* TRUST BAR */}
-
-<div style={{
-display:"flex",
-justifyContent:"center",
-gap:"40px",
-flexWrap:"wrap",
-marginBottom:"50px",
-padding:"18px",
-background:"rgba(15,23,42,.6)",
-backdropFilter:"blur(12px)",
-borderRadius:"14px",
-fontWeight:"600",
-border:"1px solid rgba(34,197,94,.12)"
-}}>
-
-<span>✅ UPI Accepted</span>
-<span>💬 WhatsApp Orders</span>
-<span>🚚 Ships Across India</span>
-<span>🔒 Secure Ordering</span>
-
-</div>
-
-
-
-{/* CATEGORY */}
+{/* THUMBNAILS */}
 
 <div style={{
 display:"flex",
 gap:"14px",
-flexWrap:"wrap",
-marginBottom:"60px"
+marginTop:"18px"
 }}>
 
-{["all","boots","jerseys","gloves","jackets","balls","gear"].map(cat=>(
+{product.images?.map((img,i)=>(
 
-<button
-key={cat}
-onClick={()=>setSelectedCategory(cat)}
+<img
+key={i}
+src={img}
+onClick={()=>setActiveImage(i)}
 style={{
-padding:"10px 22px",
-borderRadius:"999px",
-border:"1px solid rgba(34,197,94,.25)",
-background:selectedCategory===cat
-? "var(--primary)"
-: "transparent",
-color:selectedCategory===cat
-? "#000"
-: "#9ca3af",
+width:"90px",
+height:"90px",
+objectFit:"cover",
+borderRadius:"14px",
 cursor:"pointer",
-fontWeight:"700"
+border: activeImage===i
+? "2px solid #ff7a00"
+: "1px solid #111"
 }}
->
-{cat.toUpperCase()}
-</button>
+/>
 
 ))}
 
 </div>
 
+</div>
 
 
-{/* GRID */}
 
-<div
-style={{
-display:"grid",
-gridTemplateColumns:"repeat(auto-fit,minmax(220px,1fr))",
-gap:"28px"
-}}
->
+{/* 🔥 BUY SECTION */}
 
-{filtered.map(product=>{
+<div style={{
+position:"sticky",
+top:"140px"
+}}>
 
-const out = isOut(product);
-
-return(
-
-<div key={product.id}
-
-style={{
-background:"linear-gradient(145deg,#020617,#020617,#07122a)",
-padding:"20px",
-borderRadius:"18px",
-border:"1px solid rgba(34,197,94,.15)",
-transition:"0.3s",
-boxShadow:"0 10px 40px rgba(0,0,0,.6)"
-}}
-
-onMouseEnter={(e)=>{
-e.currentTarget.style.transform="translateY(-8px)";
-}}
-
-onMouseLeave={(e)=>{
-e.currentTarget.style.transform="translateY(0px)";
-}}
-
->
-
-<Link href={`/product/${product.id}`}>
-
-<img
-src={product.images?.[0] || product.image}
-style={{
-width:"100%",
-height:"190px",
-objectFit:"contain"
-}}
-/>
-
-</Link>
-
-<h3 style={{color:"var(--text)"}}>
+<h1 style={{
+fontSize:"44px",
+fontWeight:"900",
+letterSpacing:"-1px"
+}}>
 {product.name}
-</h3>
+</h1>
 
-<p style={{color:"var(--text)",fontWeight:"700"}}>
+
+<p style={{
+fontSize:"34px",
+color:"#ff7a00",
+fontWeight:"900",
+margin:"10px 0 30px"
+}}>
 ₹{product.price}
 </p>
 
-<button
-disabled={out}
-onClick={()=>{
-setPopupProduct(product);
-setSelectedSize(null);
-}}
-style={{
-marginTop:"10px",
-width:"100%",
-padding:"12px",
-borderRadius:"10px",
-border:"none",
-background: out ? "#111" : "#22c55e",
-color: out ? "#555" : "#000",
-fontWeight:"700",
-cursor:"pointer"
-}}
->
 
-{out ? "Out of Stock":"Add To Cart"}
+{/* SIZE */}
 
-</button>
-
-</div>
-
-);
-
-})}
-
-</div>
-
-
-
-{/* POPUP */}
-
-{popupProduct && (
-
-<div style={{
-position:"fixed",
-top:0,
-left:0,
-width:"100%",
-height:"100%",
-background:"rgba(0,0,0,.8)",
-display:"flex",
-justifyContent:"center",
-alignItems:"center",
-zIndex:9999
-}}>
-
-<div style={{
-background:"#020617",
-padding:"30px",
-borderRadius:"18px",
-width:"420px",
-maxWidth:"95%",
-border:"1px solid rgba(34,197,94,.2)"
-}}>
-
-<img
-src={popupProduct.images?.[0] || popupProduct.image}
-style={{
-width:"100%",
-borderRadius:"10px",
-marginBottom:"12px"
-}}
-/>
-
-<h2 style={{color:"var(--text)"}}>
-{popupProduct.name}
-</h2>
-
-<p style={{color:"var(--text)"}}>
-₹{popupProduct.price}
-</p>
-
-
-<h3 style={{color:"var(--text)"}}>Select Size</h3>
+<h3 style={{marginBottom:"10px"}}>
+Select Size
+</h3>
 
 <div style={{
 display:"flex",
 flexWrap:"wrap",
-gap:"10px",
-marginBottom:"20px"
+gap:"12px",
+marginBottom:"30px"
 }}>
 
-{Object.entries(popupProduct.sizes || {}).map(([size,stock]:any)=>{
+{Object.entries(product.sizes || {}).map(([size,stock]:any)=>{
 
 const out = Number(stock) <= 0;
 
@@ -321,14 +184,20 @@ key={size}
 disabled={out}
 onClick={()=>setSelectedSize(size)}
 style={{
-padding:"10px 14px",
-borderRadius:"8px",
+padding:"14px 20px",
+borderRadius:"12px",
 border:selectedSize===size
-? "2px solid #22c55e"
-: "1px solid #333",
-background:"var(--primary)",
-color:"white",
-cursor:"pointer"
+? "2px solid #ff7a00"
+: "1px solid #222",
+background:selectedSize===size
+? "#ff7a00"
+: "#050505",
+color:selectedSize===size
+? "#000"
+: "#fff",
+cursor: out ? "not-allowed":"pointer",
+fontWeight:"700",
+transition:".25s"
 }}
 >
 {size}
@@ -341,40 +210,67 @@ cursor:"pointer"
 </div>
 
 
+
+{/* ADD TO CART */}
+
 <button
 disabled={!selectedSize}
 onClick={()=>{
 
 addToCart({
-id: popupProduct.id,
-name: popupProduct.name,
-price: popupProduct.price,
-image: popupProduct.images?.[0] || popupProduct.image || "",
-size: selectedSize!
+id:product.id,
+name:product.name,
+price:product.price,
+image:product.images?.[0] || "",
+size:selectedSize!
 });
-
-setPopupProduct(null);
 
 }}
 style={{
 width:"100%",
-padding:"14px",
-background:selectedSize ? "#22c55e":"#333",
+padding:"20px",
+borderRadius:"16px",
 border:"none",
-borderRadius:"10px",
-fontWeight:"700",
-cursor:"pointer"
+fontSize:"18px",
+fontWeight:"900",
+letterSpacing:"1px",
+cursor:"pointer",
+
+background:selectedSize
+? "linear-gradient(90deg,#ff7a00,#ffb347)"
+: "#222",
+
+color:selectedSize ? "#000":"#666",
+
+boxShadow:selectedSize
+? "0 20px 60px rgba(255,122,0,.35)"
+: "none",
+
+transition:"0.3s"
 }}
 >
-Add To Cart
+ADD TO CART
 </button>
 
+
+{/* TRUST */}
+
+<div style={{
+marginTop:"30px",
+opacity:.7,
+fontSize:"14px",
+lineHeight:"26px"
+}}>
+✅ Ships across India <br/>
+🔥 Premium Quality Gear <br/>
+⚡ Fast Dispatch
 </div>
 
 </div>
 
-)}
+</div>
 
 </div>
+
 );
 }

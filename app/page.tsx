@@ -9,12 +9,8 @@ import { Product } from "@/types/Product";
 export default function Home(){
 
 const [products,setProducts] = useState<Product[]>([]);
-const [popupProduct,setPopupProduct] = useState<Product | null>(null);
-const [selectedSize,setSelectedSize] = useState<string | null>(null);
-
 const {addToCart} = useCart();
 
-/* FETCH */
 useEffect(()=>{
 
 async function fetchProducts(){
@@ -34,99 +30,115 @@ fetchProducts();
 },[]);
 
 
-/* STOCK */
+/* STOCK CHECK */
+
 function isOut(product:Product){
 if(!product.sizes) return true;
-return Object.values(product.sizes).every((q:any)=>q<=0);
+
+return Object.values(product.sizes)
+.every((qty:number)=> qty <= 0);
 }
+
 
 return(
 
 <div style={{
-background:"#05070f",
-minHeight:"100vh"
+background:"#000",
+minHeight:"200vh"
 }}>
 
 {/* ================= HERO ================= */}
 
-<div style={{
-height:"95vh",
+<section style={{
+position:"sticky",
+top:0,
+height:"100vh",
 display:"flex",
 flexDirection:"column",
 justifyContent:"center",
 alignItems:"center",
-textAlign:"center",
-padding:"0 20px",
-
-background:`
-radial-gradient(circle at 30% 20%,#00ff8820,transparent),
-radial-gradient(circle at 70% 80%,#0066ff20,transparent),
-#05070f
-`
+overflow:"hidden",
+zIndex:1
 }}>
+
+{/* BACKGROUND IMAGE */}
 
 <img
 src="/images/hero.png"
 style={{
 position:"absolute",
-right:"5%",
-top:"50%",
-transform:"translateY(-50%)",
-height:"85%",
-objectFit:"contain",
-filter:"drop-shadow(0 40px 80px rgba(255,140,0,.35))"
+width:"100%",
+height:"100%",
+objectFit:"cover",
+opacity:.35,
+filter:"brightness(.6)"
 }}
 />
 
+{/* DARK OVERLAY */}
+
+<div style={{
+position:"absolute",
+width:"100%",
+height:"100%",
+background:"radial-gradient(circle at 50% 40%, rgba(255,120,0,.35), black 70%)"
+}}/>
+
+{/* TEXT */}
 
 <h1 style={{
-fontSize:"clamp(42px,8vw,90px)",
-fontWeight:900,
-letterSpacing:"-2px",
-margin:0,
-
-background:"linear-gradient(90deg,#00ff87,#60efff)",
+fontSize:"clamp(60px,10vw,140px)",
+fontWeight:"900",
+letterSpacing:"-4px",
+background:"linear-gradient(90deg,#ff7a00,#ff2d00)",
 WebkitBackgroundClip:"text",
-color:"transparent"
+color:"transparent",
+zIndex:2
 }}>
-Mad Ballers
+MAD BALLERS
 </h1>
 
 <p style={{
-marginTop:"20px",
-color:"#9ca3af",
-fontSize:"20px"
+color:"#ddd",
+fontSize:"22px",
+zIndex:2
 }}>
-India's Most Premium Football Store
+India’s Most Aggressive Football Store
 </p>
 
-</div>
+</section>
 
 
 
-{/* ================= PRODUCTS (OVERLAP) ================= */}
+{/* ================= PRODUCTS LAYER ================= */}
 
-<div style={{
-
-marginTop:"-120px",   // 🔥 OVERLAP HERO
-borderTopLeftRadius:"40px",
-borderTopRightRadius:"40px",
-
-background:"#020617",
-padding:"60px 6vw",
-
-boxShadow:"0 25px 60px rgba(255,122,0,.18)"
+<section style={{
+marginTop:"-120px",
+background:"#050505",
+borderTopLeftRadius:"60px",
+borderTopRightRadius:"60px",
+padding:"80px 6vw",
+position:"relative",
+zIndex:5,
+boxShadow:"0 -40px 120px rgba(255,120,0,.25)"
 }}>
+
+<h2 style={{
+color:"white",
+fontSize:"42px",
+marginBottom:"40px",
+fontWeight:"800"
+}}>
+🔥 Featured Drops
+</h2>
 
 
 {/* GRID */}
 
 <div style={{
-
 display:"grid",
-gridTemplateColumns:"repeat(auto-fit,minmax(240px,1fr))",
-gap:"30px"
-
+gridTemplateColumns:"repeat(auto-fit,minmax(260px,1fr))",
+gap:"32px"
 }}>
 
 {products.map(product=>{
@@ -135,31 +147,30 @@ const out = isOut(product);
 
 return(
 
-<div
-key={product.id}
+<div key={product.id}
+
 style={{
-
-background:"linear-gradient(145deg,#020617,#07131f)",
-padding:"20px",
-borderRadius:"22px",
-
-border:"1px solid rgba(255,255,255,.06)",
-
-cursor:"pointer",
-transition:"0.35s"
+background:"linear-gradient(145deg,#0a0a0a,#050505)",
+padding:"24px",
+borderRadius:"26px",
+border:"1px solid #111",
+transition:"0.45s",
+cursor:"pointer"
 }}
 
-onMouseEnter={(e:any)=>{
-e.currentTarget.style.transform="translateY(-12px)";
+onMouseEnter={(e)=>{
+e.currentTarget.style.transform="translateY(-16px) scale(1.02)";
+e.currentTarget.style.boxShadow="0 50px 120px rgba(255,120,0,.25)";
 }}
 
-onMouseLeave={(e:any)=>{
+onMouseLeave={(e)=>{
 e.currentTarget.style.transform="translateY(0px)";
+e.currentTarget.style.boxShadow="none";
 }}
 >
 
 <img
-src={product.images?.[0] || product.image}
+src={product.images?.[0]}
 style={{
 width:"100%",
 height:"220px",
@@ -168,153 +179,58 @@ objectFit:"contain"
 />
 
 <h3 style={{
-color:"white"
+color:"white",
+marginTop:"14px",
+fontSize:"20px"
 }}>
 {product.name}
 </h3>
 
 <p style={{
-color:"#00ff87",
-fontWeight:800,
-fontSize:"18px"
+color:"#ff7a00",
+fontWeight:"900",
+fontSize:"20px"
 }}>
 ₹{product.price}
 </p>
 
-
 <button
 disabled={out}
-onClick={()=>{
-setPopupProduct(product);
-setSelectedSize(null);
-}}
-style={{
-width:"100%",
-padding:"14px",
-borderRadius:"12px",
-border:"none",
-
-background: out ? "#111":"linear-gradient(90deg,#00ff87,#60efff)",
-color:"#002",
-fontWeight:800,
-cursor:"pointer"
-}}
->
-{out?"Out of Stock":"Add To Cart"}
-</button>
-
-</div>
-
-);
-
-})}
-
-</div>
-
-</div>
-
-
-
-{/* ================= SIZE POPUP ================= */}
-
-{popupProduct && (
-
-<div
-onClick={()=>setPopupProduct(null)}
-style={{
-position:"fixed",
-top:0,
-left:0,
-width:"100%",
-height:"100%",
-background:"rgba(0,0,0,.85)",
-display:"flex",
-justifyContent:"center",
-alignItems:"center",
-zIndex:9999
-}}>
-
-<div
-onClick={(e)=>e.stopPropagation()}
-style={{
-background:"#020617",
-padding:"30px",
-borderRadius:"20px",
-width:"420px",
-maxWidth:"95%"
-}}
->
-
-<h2 style={{color:"white"}}>
-{popupProduct.name}
-</h2>
-
-<div style={{
-display:"flex",
-gap:"10px",
-flexWrap:"wrap",
-margin:"20px 0"
-}}>
-
-{Object.entries(popupProduct.sizes || {}).map(([size,stock]:any)=>{
-
-const out = Number(stock)<=0;
-
-return(
-
-<button
-key={size}
-disabled={out}
-onClick={()=>setSelectedSize(size)}
-style={{
-padding:"10px 16px",
-borderRadius:"10px",
-border:selectedSize===size
-?"2px solid #00ff87":"1px solid #333",
-background:"#07131f",
-color:"var(--text)"
-}}
->
-{size}
-</button>
-
-);
-
-})}
-
-</div>
-
-<button
-disabled={!selectedSize}
 onClick={()=>{
 
 addToCart({
-id: popupProduct.id,
-name: popupProduct.name,
-price: popupProduct.price,
-image: popupProduct.images?.[0] || "",
-size:selectedSize!
+id:product.id,
+name:product.name,
+price:product.price,
+image:product.images?.[0] || "",
+size:Object.keys(product.sizes || {})[0] || ""
 });
-
-setPopupProduct(null);
 
 }}
 style={{
+marginTop:"12px",
 width:"100%",
 padding:"14px",
 borderRadius:"12px",
 border:"none",
-background:"#00ff87",
-fontWeight:900
+background: out ? "#222" : "linear-gradient(90deg,#ff7a00,#ffb347)",
+color:"#000",
+fontWeight:"900",
+cursor:"pointer"
 }}
 >
-Add To Cart
+{out ? "Out of Stock":"Add To Cart"}
 </button>
 
 </div>
+
+);
+
+})}
+
 </div>
 
-)}
+</section>
 
 </div>
 );

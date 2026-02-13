@@ -241,7 +241,7 @@ padding:"14px",
 borderRadius:"10px",
 border:"1px solid rgba(255,255,255,.08)",
 background:"#020617",
-color:"white"
+color:"var(--text)"
 };
 
 const secondaryBtn = {

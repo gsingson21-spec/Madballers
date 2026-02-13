@@ -65,8 +65,8 @@ return(
 
 <div style={{
 minHeight:"100vh",
-background:"linear-gradient(180deg,#020617,#000)",
-color:"white",
+background:"linear-gradient(180deg,#020617,var(--bg))",
+color:"var(--text)",
 padding:"60px 20px"
 }}>
 
@@ -124,7 +124,7 @@ Size: {item.size}
 </p>
 
 <p style={{
-color:"#22c55e",
+color:"linear-gradient(90deg,#ff7a00,#ffb347)",
 fontWeight:"800"
 }}>
 ₹{item.price}

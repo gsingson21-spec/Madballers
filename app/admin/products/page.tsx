@@ -143,7 +143,7 @@ height:"90px"
 </h2>
 
 <p style={{
-color:"#22c55e",
+color:"#ff7a00",
 fontWeight:"800",
 fontSize:"18px"
 }}>
@@ -173,7 +173,7 @@ onClick={()=>deleteProduct(product.id)}
 style={{
 background:"var(--primary)",
 border:"none",
-color:"white",
+color:"var(--text)",
 padding:"10px 16px",
 borderRadius:"10px",
 cursor:"pointer",
@@ -230,7 +230,7 @@ padding:"6px",
 borderRadius:"6px",
 background:"#07122a",
 border:"none",
-color:"white"
+color:"var(--text)"
 }}
 />
 

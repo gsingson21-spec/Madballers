@@ -3,7 +3,7 @@
 --primary:#ff7a00;
 --primary-hover:#ff9a3d;
 
---bg:#0a0a0a;
+--bg:var(--card);
 --card:#111111;
 
 --text:#ffffff;
@@ -38,7 +38,7 @@ button:hover{
 }
 
 ::-webkit-scrollbar-thumb{
-  background:#22C55E;
+  background:linear-gradient(90deg,#ff7a00,#ffb347);
   border-radius:10px;
 }
 .productGrid{
@@ -107,5 +107,35 @@ padding:80px 24px;
 margin-top:-60px;
 padding:20px;
 }
+
+}
+
+body{
+background:var(--bg);
+}
+
+.productGrid{
+margin-top:-120px;
+position:relative;
+z-index:5;
+padding:40px;
+border-radius:40px 40px 0 0;
+background:#020617;
+}
+
+html{
+scroll-behavior:smooth;
+}
+
+:root{
+
+--bg:#000;
+--card:#0a0a0a;
+
+--primary:#ff7a00;
+--primary2:#ff2d00;
+
+--text:#ffffff;
+--muted:#9ca3af;
 
 }

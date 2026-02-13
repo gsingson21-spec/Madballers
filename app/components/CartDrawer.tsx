@@ -57,7 +57,7 @@ onClick={()=>setOpen(false)}
 style={{
 background:"var(--primary)",
 border:"none",
-color:"white",
+color:"var(--text)",
 fontSize:"22px",
 cursor:"pointer"
 }}>
@@ -98,9 +98,9 @@ borderRadius:"8px"
 <button
 onClick={()=>removeFromCart(item.id,item.size)}
 style={{
-background:"red",
+background:"var(--primary)",
 border:"none",
-color:"white",
+color:"var(--text)",
 padding:"6px 10px",
 borderRadius:"6px",
 cursor:"pointer"
@@ -122,7 +122,7 @@ X
 <button style={{
 width:"100%",
 padding:"16px",
-background:"#22c55e",
+background:"linear-gradient(90deg,#ff7a00,#ffb347)",
 border:"none",
 borderRadius:"10px",
 fontWeight:"700",

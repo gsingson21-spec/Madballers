@@ -16,28 +16,6 @@ const path = usePathname();
 const router = useRouter();
 const [allowed,setAllowed] = useState(false);
 
-/* 🔐 ADMIN GUARD */
-
-useEffect(()=>{
-
-const unsub = onAuthStateChanged(auth,(user)=>{
-
-if(
-user?.email === "Gsingson21@gmail.com"
-){
-setAllowed(true);
-}else{
-router.push("/");
-}
-
-});
-
-return ()=>unsub();
-
-},[]);
-
-if(!allowed) return null;
-
 /* NAV STYLE */
 
 const nav = (href:string)=>({
@@ -49,7 +27,7 @@ fontWeight:"700",
 textDecoration:"none",
 background:
 path === href
-? "linear-gradient(135deg,#22c55e,#16a34a)"
+? "linear-gradient(135deg,#ff7a00,#ffb347)"
 : "transparent",
 color: path === href ? "#02120a" : "#9ca3af",
 transition:"0.25s"
@@ -67,7 +45,7 @@ background:"linear-gradient(180deg,#020617,#000)"
 
 <div style={{
 width:"300px",
-background: "linear-gradient(135deg,#FF7A00,#ff9a3d)",
+background: "var(--bg)",
 color:"black",
 boxShadow:"20px 0 60px rgba(0,0,0,.8)",
 padding:"30px",
@@ -80,7 +58,7 @@ fontSize:"28px",
 fontWeight:"900",
 letterSpacing:"1px",
 marginBottom:"40px",
-color:"#22c55e"
+color:"linear-gradient(90deg,#ff7a00,#ffb347)"
 }}>
 ⚡ Boots Vault Admin
 </h1>

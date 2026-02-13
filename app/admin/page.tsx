@@ -61,7 +61,7 @@ gap:"25px"
 
 <div style={card}>
 <h2>Total Revenue</h2>
-<p style={{fontSize:"28px",color:"#22c55e"}}>
+<p style={{fontSize:"28px",color:"#ff7a00"}}>
 ₹{revenue}
 </p>
 </div>

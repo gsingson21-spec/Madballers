@@ -46,7 +46,7 @@ marginTop:"30px"
 <p style={{
 fontSize:"34px",
 fontWeight:"900",
-color:"#22c55e"
+color:"linear-gradient(90deg,#ff7a00,#ffb347)"
 }}>
 ₹{revenue}
 </p>
@@ -54,7 +54,13 @@ color:"#22c55e"
 
 <div style={card}>
 <h2>Orders</h2>
-<p>{orders}</p>
+<p style={{
+    fontSize:'34px',
+    fontWeight:'900',
+    color:'linear-gradient(90deg,#ff7a00,#ffb347)'
+}}>
+{orders}
+</p>
 </div>
 
 </div>
