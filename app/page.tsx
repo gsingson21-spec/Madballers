@@ -9,7 +9,11 @@ import { Product } from "@/types/Product";
 export default function Home(){
 
 const [products,setProducts] = useState<Product[]>([]);
+const [selectedCategory,setSelectedCategory] = useState("all");
+
 const {addToCart} = useCart();
+
+/* FETCH */
 
 useEffect(()=>{
 
@@ -30,38 +34,37 @@ fetchProducts();
 },[]);
 
 
-/* STOCK CHECK */
+/* FILTER */
 
-function isOut(product:Product){
-if(!product.sizes) return true;
+const filtered = products.filter(product=>{
 
-return Object.values(product.sizes)
-.every((qty:number)=> qty <= 0);
-}
+if(selectedCategory === "all") return true;
+
+return product.category === selectedCategory;
+
+});
 
 
 return(
 
 <div style={{
 background:"#000",
-minHeight:"200vh"
+minHeight:"100vh"
 }}>
 
 {/* ================= HERO ================= */}
 
 <section style={{
+height:"100vh",
 position:"sticky",
 top:0,
-height:"100vh",
 display:"flex",
-flexDirection:"column",
-justifyContent:"center",
 alignItems:"center",
-overflow:"hidden",
-zIndex:1
+justifyContent:"center",
+overflow:"hidden"
 }}>
 
-{/* BACKGROUND IMAGE */}
+{/* HERO IMAGE */}
 
 <img
 src="/images/hero.png"
@@ -70,30 +73,33 @@ position:"absolute",
 width:"100%",
 height:"100%",
 objectFit:"cover",
-opacity:.35,
-filter:"brightness(.6)"
+filter:"brightness(.35)"
 }}
 />
 
-{/* DARK OVERLAY */}
+{/* ORANGE GLOW */}
 
 <div style={{
 position:"absolute",
 width:"100%",
 height:"100%",
-background:"radial-gradient(circle at 50% 40%, rgba(255,120,0,.35), black 70%)"
+background:"radial-gradient(circle at 50% 40%, rgba(255,115,0,.35), transparent 60%)"
 }}/>
 
 {/* TEXT */}
 
+<div style={{
+position:"relative",
+textAlign:"center"
+}}>
+
 <h1 style={{
-fontSize:"clamp(60px,10vw,140px)",
+fontSize:"clamp(56px,9vw,140px)",
 fontWeight:"900",
-letterSpacing:"-4px",
-background:"linear-gradient(90deg,#ff7a00,#ff2d00)",
+letterSpacing:"-3px",
+background:"linear-gradient(90deg,#ff6a00,#ff2d00)",
 WebkitBackgroundClip:"text",
-color:"transparent",
-zIndex:2
+color:"transparent"
 }}>
 MAD BALLERS
 </h1>
@@ -101,70 +107,101 @@ MAD BALLERS
 <p style={{
 color:"#ddd",
 fontSize:"22px",
-zIndex:2
+marginTop:"10px"
 }}>
 India’s Most Aggressive Football Store
 </p>
+
+<p style={{
+marginTop:"60px",
+color:"#ff7a00"
+}}>
+Scroll ↓
+</p>
+
+</div>
 
 </section>
 
 
 
-{/* ================= PRODUCTS LAYER ================= */}
+{/* ================= PRODUCTS PANEL ================= */}
 
-<section style={{
+<div style={{
 marginTop:"-120px",
 background:"#050505",
 borderTopLeftRadius:"60px",
 borderTopRightRadius:"60px",
-padding:"80px 6vw",
+padding:"70px 6vw",
 position:"relative",
-zIndex:5,
-boxShadow:"0 -40px 120px rgba(255,120,0,.25)"
+zIndex:2
 }}>
 
-<h2 style={{
-color:"white",
-fontSize:"42px",
-marginBottom:"40px",
-fontWeight:"800"
+{/* 🔥 CATEGORY BAR */}
+
+<div style={{
+display:"flex",
+gap:"14px",
+flexWrap:"wrap",
+justifyContent:"center",
+marginBottom:"60px"
 }}>
-🔥 Featured Drops
-</h2>
+
+{["all","boots","jerseys","gloves","jackets","balls","gear"].map(cat=>(
+
+<button
+key={cat}
+onClick={()=>setSelectedCategory(cat)}
+style={{
+padding:"12px 26px",
+borderRadius:"999px",
+border:"1px solid #222",
+background:selectedCategory===cat
+? "linear-gradient(90deg,#ff7a00,#ffb347)"
+: "#0a0a0a",
+color:selectedCategory===cat ? "#000" : "#aaa",
+fontWeight:"800",
+cursor:"pointer",
+transition:"0.25s"
+}}
+>
+{cat.toUpperCase()}
+</button>
+
+))}
+
+</div>
 
 
-{/* GRID */}
+
+{/* 🔥 PRODUCT GRID */}
 
 <div style={{
 display:"grid",
 gridTemplateColumns:"repeat(auto-fit,minmax(260px,1fr))",
-gap:"32px"
+gap:"34px"
 }}>
 
-{products.map(product=>{
+{filtered.map(product=>(
 
-const out = isOut(product);
-
-return(
-
-<div key={product.id}
-
+<div
+key={product.id}
 style={{
 background:"linear-gradient(145deg,#0a0a0a,#050505)",
-padding:"24px",
+padding:"26px",
 borderRadius:"26px",
 border:"1px solid #111",
-transition:"0.45s",
+transition:"0.35s",
 cursor:"pointer"
 }}
 
 onMouseEnter={(e)=>{
-e.currentTarget.style.transform="translateY(-16px) scale(1.02)";
-e.currentTarget.style.boxShadow="0 50px 120px rgba(255,120,0,.25)";
+e.currentTarget.style.transform="translateY(-14px)";
+e.currentTarget.style.boxShadow="0 60px 120px rgba(255,115,0,.25)";
 }}
 
 onMouseLeave={(e)=>{
-e.currentTarget.style.transform="translateY(0px)";
+e.currentTarget.style.transform="translateY(0)";
 e.currentTarget.style.boxShadow="none";
 }}
 >
@@ -173,14 +210,14 @@ e.currentTarget.style.boxShadow="none";
 src={product.images?.[0]}
 style={{
 width:"100%",
-height:"220px",
+height:"230px",
 objectFit:"contain"
 }}
 />
 
 <h3 style={{
 color:"white",
-marginTop:"14px",
+marginTop:"16px",
 fontSize:"20px"
 }}>
 {product.name}
@@ -195,42 +232,37 @@ fontSize:"20px"
 </p>
 
 <button
-disabled={out}
 onClick={()=>{
-
 addToCart({
 id:product.id,
 name:product.name,
 price:product.price,
 image:product.images?.[0] || "",
-size:Object.keys(product.sizes || {})[0] || ""
+size:""
 });
-
 }}
 style={{
-marginTop:"12px",
+marginTop:"14px",
 width:"100%",
 padding:"14px",
 borderRadius:"12px",
 border:"none",
-background: out ? "#222" : "linear-gradient(90deg,#ff7a00,#ffb347)",
+background:"linear-gradient(90deg,#ff7a00,#ffb347)",
 color:"#000",
 fontWeight:"900",
 cursor:"pointer"
 }}
 >
-{out ? "Out of Stock":"Add To Cart"}
+Add To Cart
 </button>
 
 </div>
 
-);
-
-})}
+))}
 
 </div>
 
-</section>
+</div>
 
 </div>
 );
