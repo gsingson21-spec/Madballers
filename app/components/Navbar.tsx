@@ -47,7 +47,8 @@ borderBottom:"1px solid rgba(255,140,0,.2)",
 display:"flex",
 justifyContent:"space-between",
 alignItems:"center",
-padding:"18px 7vw"
+height:"80px",
+padding:"0 7vw"
 }}>
 
 {/* LOGO */}

@@ -139,3 +139,11 @@ scroll-behavior:smooth;
 --muted:#9ca3af;
 
 }
+
+html{
+scroll-behavior:smooth;
+}
+
+body{
+background:#000;
+}

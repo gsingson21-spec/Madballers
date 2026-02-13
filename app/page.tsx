@@ -9,8 +9,7 @@ import { Product } from "@/types/Product";
 export default function Home(){
 
 const [products,setProducts] = useState<Product[]>([]);
-const [selectedCategory,setSelectedCategory] = useState("all");
-
+const [selectedCategory,setSelectedCategory] = useState("featured products");
 const {addToCart} = useCart();
 
 /* FETCH */
@@ -38,7 +37,8 @@ fetchProducts();
 
 const filtered = products.filter(product=>{
 
-if(selectedCategory === "all") return true;
+if(selectedCategory === "featured products") 
+    return product.featured ===true;
 
 return product.category === selectedCategory;
 
@@ -54,17 +54,19 @@ minHeight:"100vh"
 
 {/* ================= HERO ================= */}
 
-<section style={{
+{/* 💥 SUPERNOVA HERO */}
+
+<div style={{
 height:"100vh",
-position:"sticky",
+position:"fixed",
 top:0,
-display:"flex",
-alignItems:"center",
-justifyContent:"center",
+left:0,
+width:"100%",
+zIndex:-1,
 overflow:"hidden"
 }}>
 
-{/* HERO IMAGE */}
+{/* BACKGROUND IMAGE */}
 
 <img
 src="/images/hero.png"
@@ -77,29 +79,38 @@ filter:"brightness(.35)"
 }}
 />
 
-{/* ORANGE GLOW */}
+{/* CINEMATIC ORANGE GLOW */}
 
 <div style={{
 position:"absolute",
 width:"100%",
 height:"100%",
-background:"radial-gradient(circle at 50% 40%, rgba(255,115,0,.35), transparent 60%)"
+background:`
+radial-gradient(circle at 20% 30%, rgba(255,120,0,.35), transparent 40%),
+radial-gradient(circle at 80% 70%, rgba(255,60,0,.25), transparent 40%)
+`
 }}/>
 
 {/* TEXT */}
 
 <div style={{
 position:"relative",
+height:"100%",
+display:"flex",
+flexDirection:"column",
+justifyContent:"center",
+alignItems:"center",
 textAlign:"center"
 }}>
 
 <h1 style={{
 fontSize:"clamp(56px,9vw,140px)",
-fontWeight:"900",
+fontWeight:900,
 letterSpacing:"-3px",
-background:"linear-gradient(90deg,#ff6a00,#ff2d00)",
+background:"linear-gradient(90deg,#ff7a00,#ff2d00)",
 WebkitBackgroundClip:"text",
-color:"transparent"
+color:"transparent",
+textShadow:"0 20px 80px rgba(255,120,0,.5)"
 }}>
 MAD BALLERS
 </h1>
@@ -112,29 +123,23 @@ marginTop:"10px"
 India’s Most Aggressive Football Store
 </p>
 
-<p style={{
-marginTop:"60px",
-color:"#ff7a00"
-}}>
-Scroll ↓
-</p>
-
 </div>
-
-</section>
-
+</div>
 
 
 {/* ================= PRODUCTS PANEL ================= */}
 
+{/* SUPERNOVA PRODUCT LAYER */}
+
 <div style={{
-marginTop:"-120px",
-background:"#050505",
-borderTopLeftRadius:"60px",
-borderTopRightRadius:"60px",
-padding:"70px 6vw",
 position:"relative",
-zIndex:2
+marginTop:"100vh",
+background:"rgba(5,5,5,.85)",
+backdropFilter:"blur(30px)",
+borderTopLeftRadius:"50px",
+borderTopRightRadius:"50px",
+padding:"80px 40px",
+boxShadow:"0 -40px 120px rgba(0,0,0,.9)"
 }}>
 
 {/* 🔥 CATEGORY BAR */}
@@ -142,30 +147,38 @@ zIndex:2
 <div style={{
 display:"flex",
 gap:"14px",
-flexWrap:"wrap",
-justifyContent:"center",
-marginBottom:"60px"
+overflowX:"auto",
+paddingBottom:"20px",
+marginBottom:"40px"
 }}>
 
-{["all","boots","jerseys","gloves","jackets","balls","gear"].map(cat=>(
+{["featured products","boots","jerseys","gloves","jackets","balls","gear"].map(cat=>(
 
 <button
-key={cat}
-onClick={()=>setSelectedCategory(cat)}
+onClick={() => setSelectedCategory(cat)}
 style={{
 padding:"12px 26px",
 borderRadius:"999px",
-border:"1px solid #222",
+border:selectedCategory===cat
+? "1px solid #ff7a00"
+: "1px solid rgba(255,255,255,.08)",
+
 background:selectedCategory===cat
 ? "linear-gradient(90deg,#ff7a00,#ffb347)"
-: "#0a0a0a",
-color:selectedCategory===cat ? "#000" : "#aaa",
+: "rgba(255,255,255,.03)",
+
+color:selectedCategory===cat
+? "#000"
+: "#ddd",
+
 fontWeight:"800",
+letterSpacing:".5px",
 cursor:"pointer",
-transition:"0.25s"
+transition:"0.25s",
+backdropFilter:"blur(10px)"
 }}
 >
-{cat.toUpperCase()}
+{cat.charAt(0).toUpperCase() + cat.slice(1)}    
 </button>
 
 ))}
@@ -188,20 +201,20 @@ gap:"34px"
 key={product.id}
 style={{
 background:"linear-gradient(145deg,#0a0a0a,#050505)",
-padding:"26px",
+padding:"24px",
 borderRadius:"26px",
-border:"1px solid #111",
-transition:"0.35s",
+border:"1px solid rgba(255,120,0,.15)",
+transition:"0.45s",
 cursor:"pointer"
 }}
 
 onMouseEnter={(e)=>{
-e.currentTarget.style.transform="translateY(-14px)";
-e.currentTarget.style.boxShadow="0 60px 120px rgba(255,115,0,.25)";
+e.currentTarget.style.transform="translateY(-18px) scale(1.03)";
+e.currentTarget.style.boxShadow="0 60px 140px rgba(255,120,0,.25)";
 }}
 
 onMouseLeave={(e)=>{
-e.currentTarget.style.transform="translateY(0)";
+e.currentTarget.style.transform="translateY(0) scale(1)";
 e.currentTarget.style.boxShadow="none";
 }}
 >

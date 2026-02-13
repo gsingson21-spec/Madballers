@@ -11,7 +11,7 @@ export default function ProductPage(){
 
 const { id } = useParams();
 const { addToCart } = useCart();
-
+const {category} = useParams();
 const [product,setProduct] = useState<Product | null>(null);
 const [selectedSize,setSelectedSize] = useState<string | null>(null);
 const [activeImage,setActiveImage] = useState(0);
