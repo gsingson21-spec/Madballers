@@ -11,6 +11,8 @@ export default function Home(){
 const [products,setProducts] = useState<Product[]>([]);
 const [selectedCategory,setSelectedCategory] = useState("featured products");
 const {addToCart} = useCart();
+const [popupProduct,setPopupProduct] = useState<Product | null>(null);
+const [selectedSize,setSelectedSize] = useState<string | null>(null);
 
 /* FETCH */
 
@@ -246,13 +248,8 @@ fontSize:"20px"
 
 <button
 onClick={()=>{
-addToCart({
-id:product.id,
-name:product.name,
-price:product.price,
-image:product.images?.[0] || "",
-size:""
-});
+setPopupProduct(product);
+setSelectedSize(null);
 }}
 style={{
 marginTop:"14px",
@@ -276,6 +273,134 @@ Add To Cart
 </div>
 
 </div>
+
+{/* SIZE SELECTOR POPUP */}
+
+{popupProduct && (
+
+<div
+onClick={()=>setPopupProduct(null)}
+style={{
+position:"fixed",
+top:0,
+left:0,
+width:"100%",
+height:"100%",
+background:"rgba(0,0,0,.9)",
+display:"flex",
+justifyContent:"center",
+alignItems:"center",
+zIndex:9999
+}}
+>
+
+<div
+onClick={(e)=>e.stopPropagation()}
+style={{
+background:"#050505",
+padding:"40px",
+borderRadius:"24px",
+width:"420px",
+maxWidth:"92%"
+}}
+>
+
+<img
+src={popupProduct.images?.[0]}
+style={{
+width:"100%",
+borderRadius:"16px",
+marginBottom:"15px"
+}}
+/>
+
+<h2 style={{color:"white"}}>
+{popupProduct.name}
+</h2>
+
+<p style={{
+color:"#ff7a00",
+fontWeight:"900",
+fontSize:"22px"
+}}>
+₹{popupProduct.price}
+</p>
+
+
+{/* SIZES */}
+
+<div style={{
+display:"flex",
+flexWrap:"wrap",
+gap:"12px",
+margin:"20px 0"
+}}>
+
+{Object.entries(popupProduct.sizes || {}).map(([size,stock]:any)=>{
+
+const out = Number(stock)<=0;
+
+return(
+
+<button
+key={size}
+disabled={out}
+onClick={()=>setSelectedSize(size)}
+style={{
+padding:"12px 18px",
+borderRadius:"12px",
+border:selectedSize===size
+? "2px solid #ff7a00"
+: "1px solid #333",
+background:"#111",
+color:"white",
+cursor:"pointer"
+}}
+>
+{size}
+</button>
+
+);
+
+})}
+
+</div>
+
+
+<button
+disabled={!selectedSize}
+onClick={()=>{
+
+addToCart({
+id:popupProduct.id,
+name:popupProduct.name,
+price:popupProduct.price,
+image:popupProduct.images?.[0] || "",
+size:selectedSize!
+});
+
+setPopupProduct(null);
+
+}}
+style={{
+width:"100%",
+padding:"16px",
+borderRadius:"14px",
+border:"none",
+background:selectedSize
+? "linear-gradient(90deg,#ff7a00,#ffb347)"
+: "#222",
+color:"#000",
+fontWeight:"900",
+cursor:"pointer"
+}}
+>
+Add To Cart
+</button>
+
+</div>
+</div>
+)}
 
 </div>
 );
