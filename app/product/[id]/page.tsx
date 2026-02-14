@@ -1,26 +1,49 @@
 'use client';
 
-import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
+import { useEffect, useState, useRef } from "react";
 import { db } from "@/lib/firebase";
 import { doc, getDoc } from "firebase/firestore";
 import { useCart } from "@/app/context/CartContext";
-import { Product } from "@/types/Product";
 
 export default function ProductPage(){
 
 const { id } = useParams();
-const { addToCart } = useCart();
-const {category} = useParams();
-const [product,setProduct] = useState<Product | null>(null);
+const [product,setProduct] = useState<any>(null);
 const [selectedSize,setSelectedSize] = useState<string | null>(null);
-const [activeImage,setActiveImage] = useState(0);
+const [currentImage, setCurrentImage] = useState(0);
+const intervalRef = useRef<NodeJS.Timeout | null>(null);
+const startInterval = () => {
 
-/* FETCH SINGLE PRODUCT */
+if(intervalRef.current) return;
+
+intervalRef.current = setInterval(() => {
+
+setCurrentImage(prev =>
+prev === product.images.length - 1 ? 0 : prev + 1
+);
+
+}, 2500);
+
+};
+
+const stopInterval = () => {
+
+if(intervalRef.current){
+clearInterval(intervalRef.current);
+intervalRef.current = null;
+}
+
+};
+const { addToCart } = useCart();
+
+/* FETCH PRODUCT */
 
 useEffect(()=>{
 
-async function load(){
+async function loadProduct(){
+
+if(!id) return;
 
 const ref = doc(db,"products",id as string);
 const snap = await getDoc(ref);
@@ -29,17 +52,39 @@ if(snap.exists()){
 setProduct({
 id:snap.id,
 ...snap.data()
-} as Product);
+});
 }
 
 }
 
-load();
+loadProduct();
 
 },[id]);
 
+useEffect(() => {
+  if (!product?.images?.length) return;
+
+  const interval = setInterval(() => {
+    setCurrentImage(prev =>
+      prev === product.images.length - 1 ? 0 : prev + 1
+    );
+  }, 2500); // change speed here (2500 = 2.5 sec)
+
+  return () => clearInterval(interval);
+}, [product]);
+
+useEffect(()=>{
+
+if(product?.images?.length > 1){
+startInterval();
+}
+
+return stopInterval;
+
+},[product]);
 
 if(!product){
+
 return(
 <div style={{
 height:"100vh",
@@ -50,157 +95,140 @@ background:"#000",
 color:"white",
 fontSize:"24px"
 }}>
-Loading Product...
+Loading Nuclear Product...
 </div>
 );
-}
 
+}
 
 return(
 
 <div style={{
 background:"#000",
 minHeight:"100vh",
-padding:"120px 7vw 80px",
-color:"white"
+paddingTop:"120px",
+paddingInline:"6vw"
 }}>
 
-{/* MAIN GRID */}
+{/* PRODUCT GRID */}
 
 <div style={{
 display:"grid",
-gridTemplateColumns:"1.2fr 1fr",
+gridTemplateColumns:"1fr 1fr",
 gap:"60px",
-alignItems:"start"
+alignItems:"center"
 }}>
 
+{/* IMAGE */}
 
-{/* 🔥 IMAGE SECTION */}
+<img
+  src={product?.images?.[currentImage] || product?.images?.[0]}
+  style={{
+    width: "100%",
+    height: "520px",
+    objectFit: "contain",
+    transition: "all 1.2s cubic-bezier(.22,1,.36,1)"
+  }}
+/>
+
+<div
+onMouseEnter={stopInterval}
+onMouseLeave={startInterval}
+/>
+
+{/* INFO */}
 
 <div>
 
-{/* BIG IMAGE */}
-
-<div style={{
-background:"#050505",
-borderRadius:"28px",
-padding:"40px",
-border:"1px solid #111"
-}}>
-
-<img
-src={product.images?.[activeImage]}
-style={{
-width:"100%",
-height:"520px",
-objectFit:"contain"
-}}
-/>
-
-</div>
-
-
-{/* THUMBNAILS */}
-
-<div style={{
-display:"flex",
-gap:"14px",
-marginTop:"18px"
-}}>
-
-{product.images?.map((img,i)=>(
-
-<img
-key={i}
-src={img}
-onClick={()=>setActiveImage(i)}
-style={{
-width:"90px",
-height:"90px",
-objectFit:"cover",
-borderRadius:"14px",
-cursor:"pointer",
-border: activeImage===i
-? "2px solid #ff7a00"
-: "1px solid #111"
-}}
-/>
-
-))}
-
-</div>
-
-</div>
-
-
-
-{/* 🔥 BUY SECTION */}
-
-<div style={{
-position:"sticky",
-top:"140px"
-}}>
-
 <h1 style={{
-fontSize:"44px",
-fontWeight:"900",
-letterSpacing:"-1px"
+color:"white",
+fontSize:"42px",
+fontWeight:"900"
 }}>
 {product.name}
 </h1>
 
-
 <p style={{
-fontSize:"34px",
 color:"#ff7a00",
-fontWeight:"900",
-margin:"10px 0 30px"
+fontSize:"28px",
+fontWeight:"900"
 }}>
 ₹{product.price}
 </p>
 
 
-{/* SIZE */}
+{/* SIZES */}
 
-<h3 style={{marginBottom:"10px"}}>
+<h3 style={{color:"white",marginTop:"30px"}}>
 Select Size
 </h3>
 
 <div style={{
 display:"flex",
-flexWrap:"wrap",
 gap:"12px",
-marginBottom:"30px"
+flexWrap:"wrap",
+margin:"20px 0"
 }}>
 
-{Object.entries(product.sizes || {}).map(([size,stock]:any)=>{
+{Object.entries(product.sizes || {}).map(([size,stock]: any)=>{
 
-const out = Number(stock) <= 0;
+const out = Number(stock)<=0;
 
 return(
 
 <button
 key={size}
 disabled={out}
-onClick={()=>setSelectedSize(size)}
+onClick={() => {!out && setSelectedSize(size)}}
 style={{
-padding:"14px 20px",
-borderRadius:"12px",
-border:selectedSize===size
+
+padding:"14px 18px",
+borderRadius:"14px",
+
+border:selectedSize === size
 ? "2px solid #ff7a00"
-: "1px solid #222",
-background:selectedSize===size
-? "#ff7a00"
-: "#050505",
-color:selectedSize===size
-? "#000"
-: "#fff",
-cursor: out ? "not-allowed":"pointer",
-fontWeight:"700",
-transition:".25s"
+: out
+? "1px solid #333"
+: "1px solid tgba(255,255,255,.15)",
+
+background:selectedSize === size
+? "linear-gradient(90deg,#ff7a00,#ffb347)"
+: out
+? "#0a0a0a"
+: "#111",
+
+color: out ? "#555" : "white",
+
+cursor: out ? "not-allowed" : "pointer",
+
+opacity: out ? 0.45 : 1,
+
+position:"relative",
+fontWeight:"800",
+letterSpacing:".5px"
+
 }}
 >
+
 {size}
+
+{/* OUT OF STOCK TAG */}
+
+{out && (
+<span style={{
+position:"absolute",
+top:"-6px",
+right:"-6px",
+fontSize:"10px",
+background:"#ff2d00",
+padding:"2px 6px",
+borderRadius:"6px",
+fontWeight:"900"
+}}>
+OUT
+</span>
+)}
+
 </button>
 
 );
@@ -209,9 +237,6 @@ transition:".25s"
 
 </div>
 
-
-
-{/* ADD TO CART */}
 
 <button
 disabled={!selectedSize}
@@ -228,49 +253,26 @@ size:selectedSize!
 }}
 style={{
 width:"100%",
-padding:"20px",
+padding:"18px",
 borderRadius:"16px",
 border:"none",
-fontSize:"18px",
-fontWeight:"900",
-letterSpacing:"1px",
-cursor:"pointer",
-
 background:selectedSize
 ? "linear-gradient(90deg,#ff7a00,#ffb347)"
 : "#222",
-
-color:selectedSize ? "#000":"#666",
-
-boxShadow:selectedSize
-? "0 20px 60px rgba(255,122,0,.35)"
-: "none",
-
-transition:"0.3s"
+color:"#000",
+fontWeight:"900",
+fontSize:"18px",
+opacity: !selectedSize ? 0.5 : 1,
+cursor: !selectedSize ? "not-allowed" : "pointer"
 }}
 >
-ADD TO CART
+Add To Cart
 </button>
 
-
-{/* TRUST */}
-
-<div style={{
-marginTop:"30px",
-opacity:.7,
-fontSize:"14px",
-lineHeight:"26px"
-}}>
-✅ Ships across India <br/>
-🔥 Premium Quality Gear <br/>
-⚡ Fast Dispatch
 </div>
 
 </div>
 
 </div>
-
-</div>
-
 );
 }

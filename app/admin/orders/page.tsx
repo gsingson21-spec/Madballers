@@ -2,11 +2,12 @@
 
 import { useEffect, useState } from "react";
 import { db } from "@/lib/firebase";
-import {
+import { 
 collection,
 getDocs,
 doc,
-updateDoc
+updateDoc,
+getDoc
 } from "firebase/firestore";
 
 export default function OrdersPage(){
@@ -31,28 +32,57 @@ fetchOrders();
 
 },[]);
 
+async function reduceStock(order:any){
+
+for(const item of order.items){
+
+const productRef = doc(db,"products",item.id);
+
+const snap = await getDoc(productRef);
+
+if(!snap.exists()) continue;
+
+const product = snap.data();
+
+const updatedSizes = {
+...product.sizes,
+[item.size]: Math.max(0, (product.sizes?.[item.size] || 0) - 1)
+};
+
+await updateDoc(productRef,{
+sizes: updatedSizes
+});
+
+}
+}
 
 /* 🔥 CHANGE STATUS */
 
-async function changeStatus(id:string,status:string){
+async function changeStatus(order:any,status:string){
 
-await updateDoc(doc(db,"orders",id),{
+if(status === "Confirmed"){
+await reduceStock(order);
+}
+
+await updateDoc(doc(db,"orders",order.id),{
 status
 });
 
 setOrders(prev =>
 prev.map(o =>
-o.id === id ? {...o,status} : o
+o.id === order.id ? {...o,status} : o
 ));
 
 }
-
 
 return(
 
 <div>
 
-<h1 style={{marginBottom:"30px"}}>
+<h1 style={{
+    marginBottom:"30px",
+    marginTop:"80px"
+}}>
 Orders
 </h1>
 
@@ -85,13 +115,14 @@ order.status === "Delivered"
 
 <select
 value={order.status}
-onChange={(e)=>changeStatus(order.id,e.target.value)}
+onChange={(e)=>changeStatus(order,e.target.value)}
 style={{
 padding:"8px",
 borderRadius:"6px",
 marginTop:"10px"
 }}
 >
+<option>Confirmed</option>
 <option>Processing</option>
 <option>Shipped</option>
 <option>Out for Delivery</option>

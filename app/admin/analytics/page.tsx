@@ -33,7 +33,12 @@ return(
 
 <div>
 
-<h1>Analytics</h1>
+<h1 style={{
+    marginBottom:"30px",
+    marginTop:"80px"
+}}>
+Analytics
+</h1>
 
 <div style={{
 display:"flex",

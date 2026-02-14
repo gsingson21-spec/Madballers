@@ -1,202 +1,137 @@
 'use client';
 
-import { useCart } from "@/app/context/CartContext";
-import { auth } from "@/lib/firebase";
-import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useCart } from "../context/CartContext";
 
 export default function Checkout(){
 
-const {cart,removeFromCart,clearCart} = useCart();
-const router = useRouter();
+const {cart, clearCart} = useCart();
 
-/* 🔥 FORCE LOGIN */
-useEffect(()=>{
-
-const user = auth.currentUser;
-
-if(!user){
-router.push("/login");
-}
-
-},[]);
-
-
-/* 🔥 TOTAL */
 const total = cart.reduce((sum,item)=>sum+item.price,0);
 
-
-/* 🔥 WHATSAPP ORDER GENERATOR */
-
-function placeOrder(){
+function sendWhatsApp(){
 
 if(cart.length === 0){
 alert("Cart is empty");
 return;
 }
 
-let message = `🔥 *NEW ORDER — MAD BALLERS* 🔥\n\n`;
+let message = `🔥 *NEW ORDER — MAD BALLERS* 🔥%0A%0A`;
 
-cart.forEach((item,i)=>{
-
-message += `*${i+1}. ${item.name}*\n`;
-message += `Size: ${item.size}\n`;
-message += `Price: ₹${item.price}\n`;
-message += `Image: ${item.image}\n\n`;
-
+cart.forEach(item=>{
+message += `• ${item.name}%0A`;
+message += `Size: ${item.size || "Ask customer"}%0A`;
+message += `Price: ₹${item.price}%0A%0A`;
 });
 
-message += `💰 *Total: ₹${total}*\n\n`;
-message += `Customer ready to purchase ✅`;
+message += `💰 *Total: ₹${total}*`;
 
 const phone = "919366946633"; // PUT HIS NUMBER
-
-const url =
-`https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
+const url = `https://wa.me/${phone}?text=${message}`;
 
 window.open(url,"_blank");
 
 clearCart();
-
-router.push("/");
 }
 
 return(
 
 <div style={{
-minHeight:"100vh",
-background:"linear-gradient(180deg,#020617,var(--bg))",
-color:"var(--text)",
-padding:"60px 20px"
-}}>
-
-<div style={{
 maxWidth:"900px",
-margin:"auto"
+margin:"120px auto",
+padding:"40px",
+background:"rgba(10,10,10,.7)",
+backdropFilter:"blur(20px)",
+borderRadius:"30px",
+border:"1px solid rgba(255,120,0,.2)"
 }}>
 
 <h1 style={{
-fontSize:"42px",
+fontSize:"48px",
 fontWeight:"900",
 marginBottom:"40px"
 }}>
 Checkout
 </h1>
 
+{cart.map(item => (
 
-
-{/* CART ITEMS */}
-
-{cart.map(item=>(
-
-<div key={item.id+item.size}
-
+<div
+key={`${item.id}-${item.size}`}
 style={{
 display:"flex",
-gap:"20px",
 alignItems:"center",
-marginBottom:"20px",
-background:"rgba(255,255,255,.03)",
-padding:"18px",
-borderRadius:"16px",
-border:"1px solid rgba(255,255,255,.05)",
-backdropFilter:"blur(10px)"
-}}>
+gap:"18px",
+background:"#0a0a0a",
+padding:"16px",
+borderRadius:"14px",
+marginBottom:"14px",
+border:"1px solid rgba(255,120,0,.15)",
+transition:"0.3s",
+transform:"scale(1.0)"
+}}
+>
 
+{/* IMAGE */}
 <img
 src={item.image}
 style={{
 width:"90px",
 height:"90px",
-objectFit:"cover",
-borderRadius:"12px"
+objectFit:"contain",
+borderRadius:"10px",
+background:"#050505",
+padding:"6px"
 }}
 />
 
+{/* INFO */}
 <div style={{flex:1}}>
 
-<h3 style={{margin:0}}>
+<h3 style={{
+color:"white",
+fontWeight:"800"
+}}>
 {item.name}
 </h3>
 
-<p style={{opacity:.7}}>
-Size: {item.size}
-</p>
-
-<p style={{
-color:"linear-gradient(90deg,#ff7a00,#ffb347)",
-fontWeight:"800"
-}}>
+<p style={{color:"#ff7a00"}}>
 ₹{item.price}
 </p>
 
+{item.size && (
+<p style={{color:"#999"}}>
+Size: {item.size}
+</p>
+)}
+
 </div>
-
-
-<button
-onClick={()=>removeFromCart(item.id,item.size)}
-style={{
-background:"var(--primary)",
-border:"none",
-color:"var(--text)",
-padding:"10px 14px",
-borderRadius:"10px",
-cursor:"pointer",
-fontWeight:"700"
-}}>
-Remove
-</button>
 
 </div>
 
 ))}
 
-
-
-{/* TOTAL */}
-
-<div style={{
-marginTop:"40px",
-paddingTop:"20px",
-borderTop:"1px solid rgba(255,255,255,.08)",
-display:"flex",
-justifyContent:"space-between",
-alignItems:"center"
-}}>
-
-<h2>Total</h2>
-
-<h2 style={{color:"var(--text)"}}>
-₹{total}
+<h2 style={{marginTop:"40px"}}>
+Total: <span style={{color:"#ff7a00"}}>₹{total}</span>
 </h2>
 
-</div>
-
-
-
-{/* ORDER BUTTON */}
-
 <button
-onClick={placeOrder}
+onClick={sendWhatsApp}
 style={{
 marginTop:"30px",
 width:"100%",
 padding:"18px",
-borderRadius:"16px",
+borderRadius:"14px",
 border:"none",
+background:"linear-gradient(90deg,#ff7a00,#ffb347)",
+color:"#000",
 fontWeight:"900",
 fontSize:"18px",
-cursor:"pointer",
-
-background:"var(--primary)",
-boxShadow:"0 20px 60px rgba(249,115,22,.35)"
-}}>
+cursor:"pointer"
+}}
+>
 Order on WhatsApp 🚀
 </button>
 
 </div>
-
-</div>
-
 );
 }

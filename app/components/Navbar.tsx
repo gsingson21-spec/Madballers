@@ -13,6 +13,10 @@ const pathname = usePathname();
 const router = useRouter();
 const { cart } = useCart();
 const [cartOpen,setCartOpen] = useState(false);
+const goToCheckout = () => {
+setCartOpen(false);
+router.push("/checkout");
+};
 
 useEffect(()=>{
 
@@ -29,6 +33,10 @@ window.addEventListener("keydown",secretAdmin);
 return ()=>window.removeEventListener("keydown",secretAdmin);
 
 },[]);
+
+useEffect(()=>{
+setCartOpen(false);
+},[pathname]);
 
 return(
 <>

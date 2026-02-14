@@ -49,7 +49,8 @@ return(
 <h1 style={{
 fontSize:"42px",
 fontWeight:"900",
-marginBottom:"40px"
+marginBottom:"40px",
+marginTop:"80px",
 }}>
 Admin Dashboard
 </h1>
