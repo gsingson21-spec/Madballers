@@ -22,8 +22,11 @@ return (
 }}>
 
 <CartProvider>
+
 <Navbar />
+
 {children}
+
 </CartProvider>
 
 </body>
