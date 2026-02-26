@@ -19,7 +19,7 @@ size:string;
 type CartContextType = {
 cart: CartItem[];
 addToCart:(item:CartItem)=>void;
-removeFromCart:(id:string,size:string)=>void;
+removeFromCart:(index:number)=>void;
 clearCart:()=>void;
 };
 
@@ -75,10 +75,8 @@ function addToCart(item:CartItem){
 setCart(prev=>[...prev,item]);
 }
 
-function removeFromCart(id:string,size:string){
-setCart(prev=>prev.filter(
-item=>!(item.id===id && item.size===size)
-));
+function removeFromCart(index:number){
+setCart(prev => prev.filter((_, i) => i ! == index));
 }
 
 function clearCart(){

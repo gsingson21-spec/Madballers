@@ -96,9 +96,9 @@ borderRadius:"8px"
 </div>
 
 <button
-onClick={()=>removeFromCart(item.id,item.size)}
+onClick={()=>removeFromCart(index)}
 style={{
-background:"var(--primary)",
+background:"var(--bg)",
 border:"none",
 color:"var(--text)",
 padding:"6px 10px",
