@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -229,3 +230,71 @@ body {
 .diagonal-bottom {
   clip-path: polygon(0 0, 100% 0, 100% 95%, 0 100%);
 }
+=======
+:root {
+  --bg: #050505;
+  --card: #0E0E10;
+  --elevated: #151518;
+  --text: #FFFFFF;
+  --muted: #8b8b95;
+  --primary: #E6E6E6;
+  --primary-hover: #FFFFFF;
+  --border: rgba(255,255,255,.08);
+  --glow: 0 0 40px rgba(255,255,255,.08);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: Inter, sans-serif;
+  overflow-x: hidden;
+}
+
+button { transition: .25s; }
+button:hover { transform: translateY(-2px); }
+
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-thumb { background: #2a2a2a; border-radius: 10px; }
+
+img { max-width: 100%; height: auto; }
+
+/* PRODUCT GRID */
+.productGrid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 20px;
+}
+
+@media (max-width: 1100px) {
+  .productGrid { grid-template-columns: repeat(3, 1fr); }
+}
+
+@media (max-width: 600px) {
+  .productGrid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+}
+
+.productGrid div { transition: 0.35s; }
+.productGrid div:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 40px 100px rgba(255,122,0,0.2);
+}
+
+/* MOBILE GLOBAL */
+@media (max-width: 768px) {
+  h1 { font-size: clamp(28px, 8vw, 52px) !important; }
+  h2 { font-size: clamp(20px, 5vw, 32px) !important; }
+  p  { font-size: 14px !important; }
+
+  button {
+    font-size: 14px !important;
+    padding: 10px 14px !important;
+  }
+}
+>>>>>>> 769c39e1785d2da330563b039f16b56d73b538aa
